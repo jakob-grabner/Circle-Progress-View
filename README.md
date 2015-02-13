@@ -1,6 +1,7 @@
 # CircleView
 An circle view, similar to Android's ProgressBar. Can be used in 'value mode' or 'spinning mode'. 
 
+![alt tag](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleView.png)
 
 Add it to you project:
 

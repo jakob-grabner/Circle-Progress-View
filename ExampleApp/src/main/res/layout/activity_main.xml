@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context=".MainActivity"
+                android:gravity="top|center">
+
+    <at.grabner.circleprogress.CircleProgressView
+        android:layout_width="277dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/circlview"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Value"
+        android:id="@+id/textView"/>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Spinning Bar Length"
+        android:id="@+id/textView2"
+        android:layout_marginTop="34dp"/>
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar2"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spin"
+        android:id="@+id/switch1"
+        android:layout_marginTop="5dp"/>
+
+
+</LinearLayout>

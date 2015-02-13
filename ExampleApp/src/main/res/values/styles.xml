@@ -1,0 +1,34 @@
+<resources>
+
+    <color name="primary_dark_color">#66009688</color>
+    <color name="primary_color">#ff009688</color>
+    <color name="secondary_color">#ff37474f</color>
+
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="colorPrimary">@color/primary_color</item>
+        <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
+        <item name="colorPrimaryDark">@color/primary_dark_color</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/secondary_color</item>
+    </style>
+
+
+
+    <style name="text_subtext">
+        <item name="android:typeface">monospace</item>
+        <item name="android:textColor">@color/secondary_color</item>
+        <item name="android:textSize">33sp</item>
+    </style>
+
+    <style name="text_header">
+        <item name="android:typeface">monospace</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primary_color</item>
+        <item name="android:textSize">33sp</item>
+    </style>
+
+</resources>

@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1.2'
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
+    productFlavors {
+    }
+
+//    android.libraryVariants.all { variant ->
+//        task("generate${variant.name}Javadoc", type: Javadoc) {
+//            description "Generates Javadoc for $variant.name."
+//            source = variant.javaCompile.source
+//            ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+//            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+//        }
+//
+//        task("javadoc${variant.name}", type: Jar) {
+//            classifier = "javadoc"
+//            description "Bundles Javadoc into a JAR file for $variant.name."
+//            from tasks["generate${variant.name}Javadoc"]
+//
+//        }
+//
+//        task("jar${variant.name}", type: Jar) {
+//            description "Bundles compiled .class files into a JAR file for $variant.name."
+//            dependsOn variant.javaCompile
+//            from variant.javaCompile.destinationDir
+//            exclude '**/R.class', '**/R$*.class', '**/R.html', '**/R.*.html'
+//        }
+//    }
+}
+
+dependencies {
+}

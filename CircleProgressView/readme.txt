@@ -1,0 +1,1 @@
+You can then execute gradle with: ./gradlew clean javadocRelease jarRelease which will build you a Jar and also a javadoc jar into the build/libs/ folder.

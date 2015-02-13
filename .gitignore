@@ -24,3 +24,7 @@ proguard/
 
 # Log Files
 *.log
+
+#idea
+/.idea/workspace.xml
+/.idea/libraries

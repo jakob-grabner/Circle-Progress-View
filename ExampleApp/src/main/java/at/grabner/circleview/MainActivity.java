@@ -1,9 +1,11 @@
 package at.grabner.circleview;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -15,33 +17,49 @@ public class MainActivity extends ActionBarActivity {
 
 
     CircleProgressView mCircleView;
-    Switch mSwitch;
+    Switch mSwitchSpin;
+    Switch mSwitchShowUnit;
     SeekBar mSeekBar;
     SeekBar mSeekBarSpinnerLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCircleView = (CircleProgressView) findViewById(R.id.circlview);
+        mCircleView = (CircleProgressView) findViewById(R.id.circleView);
         mCircleView.setMaxValue(100);
+        mCircleView.setUnit("%");
+        mCircleView.setValue(0);
 
-
-
-        mSwitch = (Switch) findViewById(R.id.switch1);
-        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        //Setup Switch
+        mSwitchSpin = (Switch) findViewById(R.id.switch1);
+        mSwitchSpin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mCircleView.spin();
-                }else{
+                } else {
                     mCircleView.stopSpinning();
                 }
             }
         });
 
+        mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
+        mSwitchShowUnit.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    mCircleView.setShowUnit(isChecked);
+            }
+        });
 
+        //Setup SeekBar
         mSeekBar = (SeekBar) findViewById(R.id.seekBar);
         mSeekBar.setMax(100);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -58,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 mCircleView.setValueAnimated(seekBar.getProgress(),1500);
-                mSwitch.setChecked(false);
+                mSwitchSpin.setChecked(false);
             }
         });
 
@@ -106,4 +124,12 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mCircleView.setValue(0);
+        mCircleView.setValueAnimated(42);
+    }
 }
+

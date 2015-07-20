@@ -4,6 +4,7 @@ import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -11,6 +12,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -45,6 +47,7 @@ public class CircleProgressView extends View {
      * The log tag.
      */
     private final static String TAG = "CircleView";
+    private static final boolean DEBUG =  false;
 
     //region members
     //value animation
@@ -68,6 +71,8 @@ public class CircleProgressView extends View {
     private int mRimWidth = 40;
     private int mTextSize = 20;
     private float mContourSize = 1;
+    private float mTextScale = 1;
+    private float mUnitScale = 1;
 
     //Padding (with defaults)
     private int mPaddingTop = 5;
@@ -81,6 +86,7 @@ public class CircleProgressView extends View {
     private int mFillColor = 0x00000000;  //transparent
     private int mRimColor = 0xAA83d0c9;
     private int mTextColor = 0xFF000000;
+    private int mUnitColor = 0xFF000000;
     private int[] mBarColors = new int[]{
             mBarColorStandard, //stylish blue
             mBarColorStandard, //stylish blue
@@ -94,11 +100,13 @@ public class CircleProgressView extends View {
     private Paint mCirclePaint = new Paint();
     private Paint mRimPaint = new Paint();
     private Paint mTextPaint = new Paint();
+    private Paint mUnitTextPaint = new Paint();
     private Paint mContourPaint = new Paint();
     //Rectangles
-    private RectF mRectBounds = new RectF();
-    private RectF mTextBounds = new RectF();
     private RectF mCircleBounds = new RectF();
+    private RectF mInnerCircleBounds = new RectF();
+    private RectF mTextBounds = new RectF();
+    private RectF mUnitBounds = new RectF();
     private RectF mCircleOuterContour = new RectF();
     private RectF mCircleInnerContour = new RectF();
     //Animation
@@ -125,6 +133,7 @@ public class CircleProgressView extends View {
     // The text to show
     private String mText = "";
 
+    private String mUnit = "";
     private int mTextLength;
     /**
      * Indicates if the given text or the current percentage value should be shown.
@@ -134,6 +143,15 @@ public class CircleProgressView extends View {
     private boolean mAutoTextValue;
     private boolean mAutoTextSize;
     private boolean mShowPercentAsAutoValue = true;
+
+
+    private boolean mShowUnit = false;
+    /**
+     * Relative size of the unite string to the value string.
+     */
+    private float mRelativeUniteSize = 0.3f;
+
+
 
 
     //endregion members
@@ -166,6 +184,7 @@ public class CircleProgressView extends View {
         setSpinSpeed((int) a.getDimension(R.styleable.CircleProgressView_spinSpeed,
                 mSpinSpeed));
 
+
         if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1) && a.hasValue(R.styleable.CircleProgressView_barColor2) && a.hasValue(R.styleable.CircleProgressView_barColor3)) {
             mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor2, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor3, mBarColorStandard)};
 
@@ -192,6 +211,9 @@ public class CircleProgressView extends View {
         setTextColor(a.getColor(R.styleable.CircleProgressView_textColor,
                 -1));
 
+        setUnitColor(a.getColor(R.styleable.CircleProgressView_unitColor,
+                -1));
+
         //if the mText is empty, show current percentage value
         setText(a.getString(R.styleable.CircleProgressView_text));
 
@@ -206,6 +228,12 @@ public class CircleProgressView extends View {
         setContourSize(a.getDimension(R.styleable.CircleProgressView_contourSize, mContourSize));
 
         setMaxValue(a.getDimension(R.styleable.CircleProgressView_maxValue, mMaxValue));
+
+        setUnit(a.getString(R.styleable.CircleProgressView_unit));
+        setShowUnit(a.getBoolean(R.styleable.CircleProgressView_showUnit, mShowUnit));
+
+        setTextScale(a.getDimension(R.styleable.CircleProgressView_textScale, mTextScale));
+        setUnitScale(a.getDimension(R.styleable.CircleProgressView_unitScale, mUnitScale));
 
         // Recycle
         a.recycle();
@@ -260,23 +288,43 @@ public class CircleProgressView extends View {
     }
 
 
+    private RectF getInnerCircleRect(RectF _circleBounds) {
 
-    private static float calcTextSize(String _text, Paint _textPaint, RectF _circleBounds) {
+        double circleWidth = +_circleBounds.width()-(Math.max(mBarWidth, mRimWidth)) - (mContourSize *2);
+//        circleWidth = _circleBounds.width();
+        double width = ((circleWidth/2d) * Math.sqrt(2d));
+        float widthDelta = (_circleBounds.width() - (float) width) / 2f;
 
-        String text = String.valueOf(_text);
+        float scaleX = 1;
+        float scaleY = 1;
+        if (isShowUnit()) {
+            scaleX = 0.77f; // scaleX square to rectangle, so the longer text with unit fits better
+            scaleY = 1.33f;
+        }
+
+        return new RectF(_circleBounds.left + (widthDelta*scaleX), _circleBounds.top + (widthDelta*scaleY), _circleBounds.right - (widthDelta*scaleX), _circleBounds.bottom -  (widthDelta*scaleY));
+
+    }
+
+    private  float calcTextSizeForCircle(String _text, Paint _textPaint, RectF _circleBounds) {
+
+        //get mTextBounds bounds
+        RectF innerCircleBounds = getInnerCircleRect(_circleBounds);
+        return calcTextSizeForRect(_text, _textPaint, innerCircleBounds);
+
+    }
+
+    private static float calcTextSizeForRect(String _text, Paint _textPaint, RectF _rectBounds) {
+
         Matrix matrix = new Matrix();
         Rect textBoundsTmp = new Rect();
 
-        //get mTextBounds bounds
-        RectF innerCircleBounds = new RectF(_circleBounds.left + _circleBounds.width() / 4, _circleBounds.top + _circleBounds.height() / 4, _circleBounds.right - _circleBounds.width() / 4, _circleBounds.bottom - _circleBounds.height() / 4);
-
 
         //get current mText bounds
-
-        _textPaint.getTextBounds(text, 0, text.length(), textBoundsTmp);
+        _textPaint.getTextBounds(_text, 0, _text.length(), textBoundsTmp);
         RectF textBoundsTmpF = new RectF(textBoundsTmp);
 
-        matrix.setRectToRect(textBoundsTmpF, innerCircleBounds, Matrix.ScaleToFit.CENTER);
+        matrix.setRectToRect(textBoundsTmpF, _rectBounds, Matrix.ScaleToFit.CENTER);
         float values[] = new float[9];
         matrix.getValues(values);
         return _textPaint.getTextSize() * values[Matrix.MSCALE_X];
@@ -349,17 +397,32 @@ public class CircleProgressView extends View {
             mAutoTextValue = true;
         } else {
             mText = text;
-            if (mAutoTextSize) {
-                //set text size
-                mTextPaint.setTextSize(calcTextSize(text, mTextPaint, mCircleBounds));
-                mTextBounds = CircleProgressView.getTextBounds(text, mTextPaint, mCircleBounds);
-            }
             mAutoTextValue = false;
         }
         invalidate();
     }
 
-    private static RectF getTextBounds(String _text, Paint _textPaint, RectF _circleBounds) {
+    public String getUnit() {
+        return mUnit;
+    }
+
+    public void setUnit(String _unit) {
+        if (_unit == null) {
+            mUnit = "";
+        } else {
+            mUnit = _unit;
+        }
+        invalidate();
+    }
+
+    /**
+     * Returns the bounding rectangle of the given _text, with the size and style defined in the _textPaint centered in the middle of the _textBounds
+     * @param _text   The text.
+     * @param _textPaint The paint defining the text size and style.
+     * @param _textBounds  The rect where the text will be centered.
+     * @return The boinding box of the text centered in the _textBounds.
+     */
+    private  RectF getTextBounds(String _text, Paint _textPaint, RectF _textBounds) {
 
         Rect textBoundsTmp = new Rect();
 
@@ -368,10 +431,12 @@ public class CircleProgressView extends View {
 
         //center in circle
         RectF textRect = new RectF();
-        textRect.left = (_circleBounds.left + ((_circleBounds.width() - textBoundsTmp.width()) / 2));
-        textRect.top = _circleBounds.top + ((_circleBounds.height() - textBoundsTmp.height()) / 2);
+        textRect.left = (_textBounds.left + ((_textBounds.width() - textBoundsTmp.width()) / 2));
+        textRect.top = _textBounds.top + ((_textBounds.height() - textBoundsTmp.height()) / 2);
         textRect.right = textRect.left + textBoundsTmp.width();
         textRect.bottom = textRect.top + textBoundsTmp.height();
+
+
 
         return textRect;
     }
@@ -450,6 +515,47 @@ public class CircleProgressView extends View {
         return mCircleRadius;
     }
 
+    public boolean isShowUnit() {
+        return mShowUnit;
+    }
+
+    public void setShowUnit(boolean _showUnit) {
+        mShowUnit = _showUnit;
+        mTextLength = 0; // triggers recalculating text sizes
+        invalidate();
+        mInnerCircleBounds = getInnerCircleRect(mCircleBounds);
+    }
+
+
+    /**
+     * @return The scale value
+     */
+    public float getUnitScale() {
+        return mUnitScale;
+    }
+
+    /**
+     * Scale factor for unit text next to the main text
+     * @param _unitScale The scale value between. 1 >= value > 0
+     */
+    public void setUnitScale(float _unitScale) {
+        mUnitScale = _unitScale;
+    }
+
+    /**
+     * @return The scale value
+     */
+    public float getTextScale() {
+        return mTextScale;
+    }
+    /**
+     * Scale factor for main text in the center of the circle view.
+     * Only relevant if auto text size is enabled.
+     * @param _textScale The scale value.
+     */
+    public void setTextScale(float _textScale) {
+        mTextScale = _textScale;
+    }
 
     /**
      * Length of spinning bar in degree.
@@ -529,6 +635,10 @@ public class CircleProgressView extends View {
         this.mTextColor = textColor;
     }
 
+    public void setUnitColor(int textColor) {
+        this.mUnitColor = textColor;
+    }
+
     public float getSpinSpeed() {
         return mSpinSpeed;
     }
@@ -605,6 +715,11 @@ public class CircleProgressView extends View {
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(getTextSize());
 
+        mUnitTextPaint.setColor(mUnitColor);
+        mUnitTextPaint.setStyle(Style.FILL);
+        mUnitTextPaint.setAntiAlias(true);
+        mUnitTextPaint.setTextSize(getTextSize());
+
         mContourPaint.setColor(mContourColor);
         mContourPaint.setAntiAlias(true);
         mContourPaint.setStyle(Style.STROKE);
@@ -631,15 +746,12 @@ public class CircleProgressView extends View {
         int width = getWidth(); //this.getLayoutParams().width;
         int height = getHeight(); //this.getLayoutParams().height;
 
-        mRectBounds = new RectF(mPaddingLeft,
-                mPaddingTop,
-                width - mPaddingRight,
-                height - mPaddingBottom);
 
         mCircleBounds = new RectF(mPaddingLeft + mBarWidth,
                 mPaddingTop + mBarWidth,
                 width - mPaddingRight - mBarWidth,
                 height - mPaddingBottom - mBarWidth);
+        mInnerCircleBounds = getInnerCircleRect(mCircleBounds);
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
 
@@ -652,6 +764,11 @@ public class CircleProgressView extends View {
     //region draw all the things
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if (DEBUG) {
+
+            drawDebug(canvas);
+        }
 
         float degrees = (360f / mMaxValue * mCurrentValue);
 
@@ -697,36 +814,101 @@ public class CircleProgressView extends View {
 
     }
 
-    private void drawCircleWithNumber(Canvas canvas, float _degrees) {
-        canvas.drawArc(mCircleBounds, -90, _degrees, false, mBarPaint);
+    private void drawDebug(Canvas canvas){
+        Paint innerRectPaint = new Paint();
+        innerRectPaint.setColor(Color.YELLOW);
+        canvas.drawRect(mCircleBounds, innerRectPaint);
 
+        innerRectPaint.setColor(Color.MAGENTA);
+        canvas.drawRect(mInnerCircleBounds, innerRectPaint);
+    }
+
+    private void drawCircleWithNumber(Canvas canvas, float _degrees) {
+
+        float relativeGap = 1.03f; //gap size between text and unit
+        boolean update = false;
+        canvas.drawArc(mCircleBounds, -90, _degrees, false, mBarPaint);
+        mTextPaint.setSubpixelText(true);
+        mTextPaint.setLinearText(true);
+        mTextPaint.setTypeface(Typeface.MONOSPACE);
         //Draw Text
         if (mTextColor == -1) //undefined
         {
             mTextPaint.setColor(getTextColor(mCurrentValue));
         }
 
+        //set text
+        String text = mText;
         if (mAutoTextValue) {
-            String text;
             if (mShowPercentAsAutoValue) {
                 int percent = (int) (100 / mMaxValue * mCurrentValue);
                 text = String.valueOf(percent);
             } else {
                 text = String.valueOf((int) mCurrentValue);
             }
+        }
+
+        //set text size and position
 
 
-            if (mAutoTextSize) {
-                if (mTextLength != text.length()) {
-                    mTextLength = text.length();
-                    mTextPaint.setTextSize(calcTextSize(text, mTextPaint, mCircleBounds));
-                    mTextBounds = CircleProgressView.getTextBounds(text, mTextPaint, mCircleBounds);
+        if (mAutoTextSize) {  // only re-calc position and size if string length changed
+            if (mTextLength != text.length()) {
+                update = true;
+                mTextLength = text.length();
+                if (mTextLength == 1) {
+                    mInnerCircleBounds = new RectF(mInnerCircleBounds.left + (mInnerCircleBounds.width() * 0.1f), mInnerCircleBounds.top, mInnerCircleBounds.right - (mInnerCircleBounds.width() * 0.1f), mInnerCircleBounds.bottom);
+                }else {
+                    mInnerCircleBounds = getInnerCircleRect(mCircleBounds);
+                }
+                RectF textRect = mInnerCircleBounds;
+
+                if (mShowUnit) {
+                    //shrink text Rect so that there is space for the unit
+                    textRect = new RectF(mInnerCircleBounds.left, mInnerCircleBounds.top, mInnerCircleBounds.right - ((mInnerCircleBounds.width() * (mRelativeUniteSize))*relativeGap), mInnerCircleBounds.bottom);
                 }
 
+                mTextPaint.setTextSize(calcTextSizeForRect(text, mTextPaint, textRect)* mTextScale);
+                mTextBounds = getTextBounds(text, mTextPaint, textRect); // center text in text rect
             }
-            canvas.drawText(text, mTextBounds.left - 25, mTextBounds.bottom, mTextPaint);
+
+
         } else {
-            canvas.drawText(mText, mTextBounds.left - 25, mTextBounds.bottom, mTextPaint);
+            mTextBounds = getTextBounds(text, mTextPaint, mCircleBounds); //center text in circle
+        }
+
+        if (DEBUG){
+            Paint rectPaint = new Paint();
+            rectPaint.setColor(Color.GREEN);
+            canvas.drawRect(mTextBounds, rectPaint);
+        }
+
+        canvas.drawText(text, mTextBounds.left-(mTextPaint.getTextSize()*0.09f), mTextBounds.bottom, mTextPaint);
+
+
+        if (mShowUnit) {
+
+
+            if (mUnitColor == -1) //undefined
+            {
+                mUnitTextPaint.setColor(getTextColor(mCurrentValue));
+            }
+            if (update) {
+                //calc unit text position
+                mUnitBounds = new RectF(mInnerCircleBounds.left + (mInnerCircleBounds.width() * (1 - mRelativeUniteSize) * relativeGap), mInnerCircleBounds.top, mInnerCircleBounds.right, mInnerCircleBounds.bottom);
+                mUnitTextPaint.setTextSize(calcTextSizeForRect(mUnit, mUnitTextPaint, mUnitBounds) * mUnitScale);
+                mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mUnitBounds);
+                //move unite to top of text
+                float dy = mTextBounds.top - mUnitBounds.top;
+                mUnitBounds.offset(0, dy);
+            }
+
+            if (DEBUG){
+                Paint rectPaint = new Paint();
+                rectPaint.setColor(Color.RED);
+                canvas.drawRect(mUnitBounds, rectPaint);
+            }
+
+            canvas.drawText(mUnit, mUnitBounds.left, mUnitBounds.bottom, mUnitTextPaint);
         }
     }
 

@@ -11,10 +11,10 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/CircleProgressView" />
             <option value="$PROJECT_DIR$/ExampleApp" />
+            <option value="$PROJECT_DIR$/ExampleAppV2" />
           </set>
         </option>
       </GradleProjectSettings>
     </option>
   </component>
 </project>
-

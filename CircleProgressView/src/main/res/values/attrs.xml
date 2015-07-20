@@ -2,7 +2,10 @@
 <resources>
     <declare-styleable name="CircleProgressView">
         <attr name="text" format="string" />
+        <attr name="unit" format="string" />
+        <attr name="showUnit" format="boolean" />
         <attr name="textColor" format="color" />
+        <attr name="unitColor" format="color" />
         <attr name="textSize" format="dimension" />
         <attr name="spinColor" format="color" />
         <attr name="maxValue" format="dimension" />
@@ -18,5 +21,7 @@
         <attr name="spinBarLength" format="dimension" />
         <attr name="contourColor" format="color"/>
         <attr name="contourSize" format="dimension"/>
+        <attr name="textScale" format="dimension" />
+        <attr name="unitScale" format="dimension" />
     </declare-styleable>
 </resources>

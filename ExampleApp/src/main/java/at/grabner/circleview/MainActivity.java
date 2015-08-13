@@ -1,5 +1,9 @@
 package at.grabner.circleview;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -75,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                mCircleView.setValueAnimated(seekBar.getProgress(),1500);
+                mCircleView.setValueAnimated(seekBar.getProgress(), 1500);
                 mSwitchSpin.setChecked(false);
             }
         });
@@ -99,6 +103,9 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+
+
+        mCircleView.setBackgroundCircleColor(Color.RED);
 
     }
 
@@ -130,6 +137,25 @@ public class MainActivity extends ActionBarActivity {
         super.onStart();
         mCircleView.setValue(0);
         mCircleView.setValueAnimated(42);
+    }
+
+    public static Bitmap getMaskingBitmap(Resources res,  int sourceResId) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            options.inMutable = true;
+        }
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap source = BitmapFactory.decodeResource(res, sourceResId, options);
+        Bitmap bitmap;
+        if (source.isMutable()) {
+            bitmap = source;
+        } else {
+            bitmap = source.copy(Bitmap.Config.ARGB_8888, true);
+            source.recycle();
+        }
+        bitmap.setHasAlpha(true);
+
+        return bitmap;
     }
 }
 

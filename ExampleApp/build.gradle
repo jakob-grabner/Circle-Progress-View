@@ -21,6 +21,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':library')
+    compile project(':CircleProgressView')
     compile 'com.android.support:appcompat-v7:22.1.1'
 }

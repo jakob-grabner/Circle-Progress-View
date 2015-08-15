@@ -3,7 +3,6 @@ package at.grabner.circleview;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -105,7 +104,7 @@ public class MainActivity extends ActionBarActivity {
 
 
 
-        mCircleView.setBackgroundCircleColor(Color.RED);
+//        mCircleView.setBackgroundCircleColor(Color.RED);
 
     }
 

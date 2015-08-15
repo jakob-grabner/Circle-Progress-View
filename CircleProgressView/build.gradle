@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -22,29 +22,18 @@ android {
     productFlavors {
     }
 
-//    android.libraryVariants.all { variant ->
-//        task("generate${variant.name}Javadoc", type: Javadoc) {
-//            description "Generates Javadoc for $variant.name."
-//            source = variant.javaCompile.source
-//            ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
-//            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
-//        }
-//
-//        task("javadoc${variant.name}", type: Jar) {
-//            classifier = "javadoc"
-//            description "Bundles Javadoc into a JAR file for $variant.name."
-//            from tasks["generate${variant.name}Javadoc"]
-//
-//        }
-//
-//        task("jar${variant.name}", type: Jar) {
-//            description "Bundles compiled .class files into a JAR file for $variant.name."
-//            dependsOn variant.javaCompile
-//            from variant.javaCompile.destinationDir
-//            exclude '**/R.class', '**/R$*.class', '**/R.html', '**/R.*.html'
-//        }
-//    }
+
 }
 
 dependencies {
+}
+
+apply plugin: 'android-maven'
+// build a jar with source files
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+artifacts {
+    archives sourcesJar
 }

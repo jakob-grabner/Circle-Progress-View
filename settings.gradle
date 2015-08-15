@@ -1,1 +1,2 @@
-include ':ExampleApp', ':CircleProgressView', ':ExampleAppV2'
+include ':library'
+include ':ExampleApp'

@@ -3,8 +3,19 @@ An circle view, similar to Android's ProgressBar. Can be used in 'value mode' or
 
 ![alt tag](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleProgressView.png)
 
-Add it to you project
------
+Add it to you project:
 
-Get the latest version from [JitPack.io](https://jitpack.io/#jakob-grabner/Circle-Progress-View)
+	- Download the CircleProgressView.aar into your libs folder.
+	- Add libs folder as a maven repo in your build.gradle
+	
+	repositories {
+		mavenCentral()
+		flatDir {
+			dirs 'libs' //this way we can find the .aar file in libs folder
+		}
+	}
+	
+	- add dependency
+	compile 'at.grabner.circleprogress:CircleProgressView:1.0@aar'
+	
 

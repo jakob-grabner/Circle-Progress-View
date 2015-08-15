@@ -8,6 +8,7 @@
         <attr name="unitColor" format="color" />
         <attr name="showUnit" format="boolean" />
         <attr name="textSize" format="dimension" />
+        <attr name="unitSize" format="dimension" />
         <attr name="textScale" format="dimension" />
         <attr name="unitScale" format="dimension" />
 

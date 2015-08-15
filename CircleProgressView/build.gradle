@@ -28,12 +28,12 @@ android {
 dependencies {
 }
 
-apply plugin: 'android-maven'
-// build a jar with source files
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-}
-artifacts {
-    archives sourcesJar
-}
+//apply plugin: 'android-maven'
+//// build a jar with source files
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
+//}
+//artifacts {
+//    archives sourcesJar
+//}

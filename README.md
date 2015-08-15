@@ -5,7 +5,7 @@ An circle view, similar to Android's ProgressBar. Can be used in 'value mode' or
 
 Add it to you project:
 
-Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View/60d0dab49b 
+Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View 
 
 	
 	repositories {

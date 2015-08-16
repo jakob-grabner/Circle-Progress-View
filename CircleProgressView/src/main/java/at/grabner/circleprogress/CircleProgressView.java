@@ -443,6 +443,8 @@ public class CircleProgressView extends View {
      */
     public void setContourSize(float _contourSize) {
         mContourSize = _contourSize;
+        setupContourPaint();
+
     }
 
     /**
@@ -667,6 +669,8 @@ public class CircleProgressView extends View {
      */
     public void setBarWidth(int barWidth) {
         this.mBarWidth = barWidth;
+        setupBarSpinnerPaint();
+        setupBarPaint();
     }
 
     public int[] getBarColors() {
@@ -783,6 +787,7 @@ public class CircleProgressView extends View {
      */
     public void setRimWidth(int rimWidth) {
         this.mRimWidth = rimWidth;
+        setupRimPaint();
     }
 
     /**
@@ -1059,7 +1064,7 @@ public class CircleProgressView extends View {
             }
 
         } else {
-            // only re-calc position and size if string length changed 
+            // only re-calc position and size if string length changed
             if (mTextLength != text.length()) {
                 update = true;
                 mTextLength = text.length();

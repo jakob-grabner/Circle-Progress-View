@@ -182,8 +182,8 @@ public class CircleProgressView extends View {
     /**
      * The constructor for the CircleView
      *
-     * @param context
-     * @param attrs
+     * @param context The context.
+     * @param attrs The attributes.
      */
     public CircleProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -361,7 +361,7 @@ public class CircleProgressView extends View {
 
     /**
      * Use onSizeChanged instead of onAttachedToWindow to get the dimensions of the view,
-     * because this method is called after measuring the dimensions of MATCH_PARENT & WRAP_CONTENT.
+     * because this method is called after measuring the dimensions of MATCH_PARENT and WRAP_CONTENT.
      * Use this dimensions to setup the bounds and paints.
      */
     @Override
@@ -1153,6 +1153,7 @@ public class CircleProgressView extends View {
     /**
      * Set the value of the circle view without an animation.
      * Stops any currently active animations.
+     * @param _value The value.
      */
     public void setValue(float _value) {
         Message msg = new Message();

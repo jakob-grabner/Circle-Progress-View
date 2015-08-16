@@ -154,6 +154,8 @@ public class CircleProgressView extends View {
      * false: given text
      */
     private boolean mAutoTextValue;
+
+
     private boolean mAutoTextSize;
     private boolean mShowPercentAsAutoValue = true;
 
@@ -248,7 +250,7 @@ public class CircleProgressView extends View {
         setRimColor(a.getColor(R.styleable.CircleProgressView_rimColor,
                 mRimColor));
 
-        setBackgroundCircleColor(a.getColor(R.styleable.CircleProgressView_fillColor,
+        setFillCircleColor(a.getColor(R.styleable.CircleProgressView_fillColor,
                 mBackgroundCircleColor));
 
         setContourColor(a.getColor(R.styleable.CircleProgressView_contourColor, mContourColor));
@@ -539,6 +541,18 @@ public class CircleProgressView extends View {
         }
     }
 
+    public boolean isAutoTextSize() {
+        return mAutoTextSize;
+    }
+
+    /**
+     *
+     * @param _autoTextSize true to enable auto text size calculation.
+     */
+    public void setAutoTextSize(boolean _autoTextSize) {
+        mAutoTextSize = _autoTextSize;
+    }
+
     /**
      * Text size of the unit string. Only used if text size is also set. (So automatic text size
      * calculation is off. see {@link #setTextSize(int)}).
@@ -709,7 +723,7 @@ public class CircleProgressView extends View {
      * Sets the background color of the entire Progress Circle.
      * @param circleColor the color.
      */
-    public void setBackgroundCircleColor(int circleColor) {
+    public void setFillCircleColor(int circleColor) {
         this.mBackgroundCircleColor = circleColor;
         setupBackgroundCirclePaint();
     }
@@ -841,6 +855,19 @@ public class CircleProgressView extends View {
     //region Setting up stuff
     //----------------------------------
 
+    /**
+     * Setup all paints.
+     * Call only if changes to color or size properties are not visible.
+     */
+    public void setupPaints(){
+        setupBarPaint();
+        setupBarSpinnerPaint();
+        setupContourPaint();
+        setupUnitTextPaint();
+        setupTextPaint();
+        setupBackgroundCirclePaint();
+        setupRimPaint();
+    }
 
 
     private void setupContourPaint() {
@@ -1104,9 +1131,9 @@ public class CircleProgressView extends View {
 
                 //set unit text size
                 if (mAutoTextSize) {
-                    mUnitTextPaint.setTextSize(calcTextSizeForRect(mUnit, mUnitTextPaint, mUnitBounds) * mUnitScale);
                     //calc the rectangle containing the unit text
                     mUnitBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * (1 - mRelativeUniteSize) * relativeGap), mOuterTextBounds.top, mOuterTextBounds.right, mOuterTextBounds.bottom);
+                    mUnitTextPaint.setTextSize(calcTextSizeForRect(mUnit, mUnitTextPaint, mUnitBounds) * mUnitScale);
                     mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mUnitBounds); // center text in rectangle and reuse it
 
                 } else {

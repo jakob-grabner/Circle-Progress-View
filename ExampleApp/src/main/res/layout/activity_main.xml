@@ -15,10 +15,18 @@
         android:layout_width="277dp"
         android:layout_height="wrap_content"
         android:id="@+id/circleView"
-        CircleProgressView:rimWidth="35dp"
-        CircleProgressView:barWidth="35dp"
         CircleProgressView:contourSize="0dp"
-        CircleProgressView:unitColor="@color/primary_color"/>
+        CircleProgressView:rimWidth="35dp"
+        CircleProgressView:rimColor="#B2DFDB"
+        CircleProgressView:barWidth="35dp"
+        CircleProgressView:barColor="#00796B"
+        CircleProgressView:showUnit="true"
+        CircleProgressView:unit="%"
+        CircleProgressView:unitColor="#009688"
+        CircleProgressView:textColor="#00796B"/>
+
+
+
 
     <TextView
         android:layout_width="wrap_content"

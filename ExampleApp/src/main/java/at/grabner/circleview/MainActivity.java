@@ -1,14 +1,7 @@
 package at.grabner.circleview;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.WebView;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -28,18 +21,31 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mCircleView = (CircleProgressView) findViewById(R.id.circleView);
+//      value setting
         mCircleView.setMaxValue(100);
-        mCircleView.setUnit("%");
         mCircleView.setValue(0);
+        mCircleView.setValueAnimated(24);
+
+//        show unit
+        mCircleView.setUnit("%");
+        mCircleView.setShowUnit(true);
+
+//        text sizes
+        mCircleView.setTextSize(20); // text size set, auto text size off
+        mCircleView.setUnitSize(15); // if i set the text size i also have to set the unit size
+
+        mCircleView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
+
+//        spinning
+        mCircleView.spin(); // start spinning
+        mCircleView.stopSpinning(); // stops spinning. Spinner gets shorter until it disappears.
+        mCircleView.setValueAnimated(24); // stops spinning. Spinner spinns until on top. Then fills to set value.
+
+
 
         //Setup Switch
         mSwitchSpin = (Switch) findViewById(R.id.switch1);
@@ -103,33 +109,9 @@ public class MainActivity extends ActionBarActivity {
         });
 
 
-
-//        mCircleView.setBackgroundCircleColor(Color.RED);
-
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     protected void onStart() {
@@ -138,23 +120,5 @@ public class MainActivity extends ActionBarActivity {
         mCircleView.setValueAnimated(42);
     }
 
-    public static Bitmap getMaskingBitmap(Resources res,  int sourceResId) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            options.inMutable = true;
-        }
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap source = BitmapFactory.decodeResource(res, sourceResId, options);
-        Bitmap bitmap;
-        if (source.isMutable()) {
-            bitmap = source;
-        } else {
-            bitmap = source.copy(Bitmap.Config.ARGB_8888, true);
-            source.recycle();
-        }
-        bitmap.setHasAlpha(true);
-
-        return bitmap;
-    }
 }
 

@@ -721,11 +721,13 @@ public class CircleProgressView extends View {
 
     /**
      * Sets the background color of the entire Progress Circle.
+     * Set the color to 0x00000000 (Color.TRANSPARENT) to hide it.
      * @param circleColor the color.
      */
     public void setFillCircleColor(int circleColor) {
         this.mBackgroundCircleColor = circleColor;
         setupBackgroundCirclePaint();
+
     }
 
     public int getRimColor() {
@@ -985,7 +987,9 @@ public class CircleProgressView extends View {
         float degrees = (360f / mMaxValue * mCurrentValue);
 
         //Draw the background circle
-        canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
+        if (mBackgroundCircleColor > 0) {
+            canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
+        }
         //Draw the rim
         if(mRimWidth > 0){
             canvas.drawArc(mCircleBounds, 360, 360, false, mRimPaint);

@@ -842,6 +842,20 @@ public class CircleProgressView extends View {
         }
     }
 
+    /**
+     * @param typeface The typeface to use for the text
+     */
+    public void setTextTypeface(Typeface typeface) {
+        mTextPaint.setTypeface(typeface);
+    }
+
+    /**
+     * @param typeface The typeface to use for the unit text
+     */
+    public void setUnitTextTypeface(Typeface typeface) {
+        mUnitTextPaint.setTypeface(typeface);
+    }
+
 
     /**
      *
@@ -889,6 +903,9 @@ public class CircleProgressView extends View {
     }
 
     private void setupTextPaint() {
+        mTextPaint.setSubpixelText(true);
+        mTextPaint.setLinearText(true);
+        mTextPaint.setTypeface(Typeface.MONOSPACE);
         mTextPaint.setColor(mTextColor);
         mTextPaint.setStyle(Style.FILL);
         mTextPaint.setAntiAlias(true);
@@ -1051,9 +1068,6 @@ public class CircleProgressView extends View {
         final float relativeGap = 1.03f; //gap size between text and unit
         boolean update = false;
         canvas.drawArc(mCircleBounds, -90, _degrees, false, mBarPaint);
-        mTextPaint.setSubpixelText(true);
-        mTextPaint.setLinearText(true);
-        mTextPaint.setTypeface(Typeface.MONOSPACE);
         //Draw Text
         if (mTextColor == -1) //undefined
         {

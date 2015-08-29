@@ -23,7 +23,8 @@
         CircleProgressView:showUnit="true"
         CircleProgressView:unit="%"
         CircleProgressView:unitColor="#009688"
-        CircleProgressView:textColor="#00796B"/>
+        CircleProgressView:textColor="#00796B"
+        CircleProgressView:seekMode="true"/>
 
 
 

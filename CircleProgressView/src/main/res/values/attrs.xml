@@ -36,5 +36,8 @@
         <!-- Background color-->
         <attr name="fillColor" format="color" />
 
+        <!-- Seek mode-->
+        <attr name="seekMode" format="boolean" />
+
     </declare-styleable>
 </resources>

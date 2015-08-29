@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -19,6 +20,7 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -111,6 +113,8 @@ public class CircleProgressView extends View {
     //Rectangles
     private RectF mCircleBounds = new RectF();
     private RectF mInnerCircleBound = new RectF();
+    private PointF mCenter;
+
     /**
      * Maximum size of the text.
      */
@@ -125,6 +129,9 @@ public class CircleProgressView extends View {
     //Animation
     //The amount of degree to move the bar by on each draw
     private float mSpinSpeed = 2.8f;
+    /**
+     * The animation duration in ms
+     */
     private double mAnimationDuration = 900;
 
     //The number of milliseconds to wait in between each draw
@@ -171,12 +178,7 @@ public class CircleProgressView extends View {
      * Relative size of the unite string to the value string.
      */
     private float mRelativeUniteSize = 0.3f;
-
-
-
-
-
-
+    private boolean mSeekModeEnabled = false;
 
 
     //endregion members
@@ -264,6 +266,8 @@ public class CircleProgressView extends View {
         setTextScale(a.getDimension(R.styleable.CircleProgressView_textScale, mTextScale));
         setUnitScale(a.getDimension(R.styleable.CircleProgressView_unitScale, mUnitScale));
 
+        setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_seekMode, mSeekModeEnabled));
+
         // Recycle
         a.recycle();
     }
@@ -347,10 +351,11 @@ public class CircleProgressView extends View {
 
         Matrix matrix = new Matrix();
         Rect textBoundsTmp = new Rect();
-
+        //replace ones because for some fonts the 1 takes less space which causes issues
+        String text = _text.replace('1', '0');
 
         //get current mText bounds
-        _textPaint.getTextBounds(_text, 0, _text.length(), textBoundsTmp);
+        _textPaint.getTextBounds(text, 0, text.length(), textBoundsTmp);
         RectF textBoundsTmpF = new RectF(textBoundsTmp);
 
         matrix.setRectToRect(textBoundsTmpF, _rectBounds, Matrix.ScaleToFit.CENTER);
@@ -987,6 +992,7 @@ public class CircleProgressView extends View {
 
         mFullRadius = (width - mPaddingRight - mBarWidth) / 2;
         mCircleRadius = (mFullRadius - mBarWidth) + 1;
+        mCenter = new PointF(mCircleBounds.centerX(), mCircleBounds.centerY());
     }
     //endregion Setting up stuff
 
@@ -1212,7 +1218,7 @@ public class CircleProgressView extends View {
      *
      * @param _valueFrom         start value of the animation
      * @param _valueTo           value after animation
-     * @param _animationDuration the duration of the animation
+     * @param _animationDuration the duration of the animation in milliseconds
      */
     public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
         mAnimationDuration = _animationDuration;
@@ -1227,7 +1233,7 @@ public class CircleProgressView extends View {
      * The current value is used as the start value of the animation
      *
      * @param _valueTo           value after animation
-     * @param _animationDuration the duration of the animation
+     * @param _animationDuration the duration of the animation in milliseconds.
      */
     public void setValueAnimated(float _valueTo, long _animationDuration) {
 
@@ -1251,6 +1257,14 @@ public class CircleProgressView extends View {
         msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
         msg.obj = new float[]{mCurrentValue, _valueTo};
         mAnimationHandler.sendMessage(msg);
+    }
+
+    public void setSeekModeEnabled(boolean _seekModeEnabled) {
+        mSeekModeEnabled = _seekModeEnabled;
+    }
+
+    public boolean isSeekModeEnabled() {
+        return mSeekModeEnabled;
     }
     //endregion important getter / setter
 
@@ -1605,4 +1619,96 @@ public class CircleProgressView extends View {
 
     //endregion Animation stuff
     //----------------------------------
+
+    //----------------------------------
+    //region touch input
+
+    private int mTouchEventCount;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (mSeekModeEnabled == false) {
+            return super.onTouchEvent(event);
+        }
+
+        switch (event.getActionMasked()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_UP: {
+                mTouchEventCount = 0;
+                PointF point = new PointF(event.getX(), event.getY());
+                float angle = (float) calcRotationAngleInDegrees(mCenter, point);
+                setValueAnimated(mMaxValue / 360f * angle, 800);
+                return true;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                mTouchEventCount ++;
+                if (mTouchEventCount > 5) {
+                    PointF point = new PointF(event.getX(), event.getY());
+                    float angle = (float) calcRotationAngleInDegrees(mCenter, point);
+                    setValue(mMaxValue / 360f * angle);
+                    return true;
+                }else {
+                    return false;
+                }
+
+            }
+            case MotionEvent.ACTION_CANCEL:
+                mTouchEventCount = 0;
+                return false;
+        }
+
+
+        return super.onTouchEvent(event);
+    }
+
+
+    /**
+     * Calculates the angle from centerPt to targetPt in degrees.
+     * The return should range from [0,360), rotating CLOCKWISE,
+     * 0 and 360 degrees represents NORTH,
+     * 90 degrees represents EAST, etc...
+     *
+     * Assumes all points are in the same coordinate space.  If they are not,
+     * you will need to call SwingUtilities.convertPointToScreen or equivalent
+     * on all arguments before passing them  to this function.
+     *
+     * @param centerPt   Point we are rotating around.
+     * @param targetPt   Point we want to calcuate the angle to.
+     * @return angle in degrees.  This is the angle from centerPt to targetPt.
+     */
+    public static double calcRotationAngleInDegrees(PointF centerPt, PointF targetPt)
+    {
+        // calculate the angle theta from the deltaY and deltaX values
+        // (atan2 returns radians values from [-PI,PI])
+        // 0 currently points EAST.
+        // NOTE: By preserving Y and X param order to atan2,  we are expecting
+        // a CLOCKWISE angle direction.
+        double theta = Math.atan2(targetPt.y - centerPt.y, targetPt.x - centerPt.x);
+
+        // rotate the theta angle clockwise by 90 degrees
+        // (this makes 0 point NORTH)
+        // NOTE: adding to an angle rotates it clockwise.
+        // subtracting would rotate it counter-clockwise
+        theta += Math.PI/2.0;
+
+        // convert from radians to degrees
+        // this will give you an angle from [0->270],[-180,0]
+        double angle = Math.toDegrees(theta);
+
+        // convert to positive range [0-360)
+        // since we want to prevent negative angles, adjust them now.
+        // we can assume that atan2 will not return a negative value
+        // greater than one partial rotation
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle;
+    }
+
+
+    //endregion
+    //----------------------------------
+
 }

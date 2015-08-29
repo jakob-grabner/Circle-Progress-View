@@ -24,18 +24,29 @@ The spin bar color can consist of a single color or a gradient from up to 4 colo
 
 ![Gradient colors.](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/ColorGradient.jpg)
 
-
+# Seek Mode
+Set value on touch input. Enbale it:
+- Via Code:
+```
+	circleview.setSeekModeEnabled(true);
+```
+- Via XML:
+```
+	CircleProgressView:seekMode="true"
+```
 ## Add it to you project:
 
 Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View 
 
-	repositories {
-	    // ...
-	    maven { url "https://jitpack.io" }
+	allprojects {
+	    repositories {
+	        // ...
+	        maven { url "https://jitpack.io" }
+	    }
 	}
 	
 	
 	dependencies {
 		// ...
-	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2'
+	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
 	}

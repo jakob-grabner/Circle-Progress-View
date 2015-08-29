@@ -48,5 +48,5 @@ Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-Vi
 	
 	dependencies {
 		// ...
-	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.3'
+	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.1'
 	}

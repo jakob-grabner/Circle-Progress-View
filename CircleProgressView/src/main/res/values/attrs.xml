@@ -9,11 +9,11 @@
         <attr name="showUnit" format="boolean" />
         <attr name="textSize" format="dimension" />
         <attr name="unitSize" format="dimension" />
-        <attr name="textScale" format="dimension" />
-        <attr name="unitScale" format="dimension" />
+        <attr name="textScale" format="float" />
+        <attr name="unitScale" format="float" />
 
         <!-- Progress Bar -->
-        <attr name="maxValue" format="dimension" />
+        <attr name="maxValue" format="float" />
         <attr name="barWidth" format="dimension" />
         <attr name="barColor" format="color" />
         <attr name="barColor1" format="color" />
@@ -22,8 +22,8 @@
 
         <!-- Spinner-->
         <attr name="spinColor" format="color" />
-        <attr name="spinSpeed" format="dimension" />
-        <attr name="spinBarLength" format="dimension" />
+        <attr name="spinSpeed" format="float" />
+        <attr name="spinBarLength" format="float" />
 
         <!-- Rim-->
         <attr name="rimColor" format="color" />

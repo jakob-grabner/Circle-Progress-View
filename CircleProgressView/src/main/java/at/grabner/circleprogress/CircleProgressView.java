@@ -212,7 +212,7 @@ public class CircleProgressView extends View {
         setRimWidth((int) a.getDimension(R.styleable.CircleProgressView_rimWidth,
                 mRimWidth));
 
-        setSpinSpeed((int) a.getDimension(R.styleable.CircleProgressView_spinSpeed,
+        setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_spinSpeed,
                 mSpinSpeed));
 
 
@@ -233,7 +233,8 @@ public class CircleProgressView extends View {
 
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_spinColor, mSpinnerColor));
 
-        setSpinningBarLength(mSpinningBarLengthOrig = a.getDimension(R.styleable.CircleProgressView_spinBarLength,
+
+        setSpinningBarLength( a.getFloat(R.styleable.CircleProgressView_spinBarLength,
                 mSpinningBarLengthOrig));
 
         setTextSize((int) a.getDimension(R.styleable.CircleProgressView_textSize, mTextSize));
@@ -258,13 +259,13 @@ public class CircleProgressView extends View {
         setContourColor(a.getColor(R.styleable.CircleProgressView_contourColor, mContourColor));
         setContourSize(a.getDimension(R.styleable.CircleProgressView_contourSize, mContourSize));
 
-        setMaxValue(a.getDimension(R.styleable.CircleProgressView_maxValue, mMaxValue));
+        setMaxValue(a.getFloat(R.styleable.CircleProgressView_maxValue, mMaxValue));
 
         setUnit(a.getString(R.styleable.CircleProgressView_unit));
         setShowUnit(a.getBoolean(R.styleable.CircleProgressView_showUnit, mShowUnit));
 
-        setTextScale(a.getDimension(R.styleable.CircleProgressView_textScale, mTextScale));
-        setUnitScale(a.getDimension(R.styleable.CircleProgressView_unitScale, mUnitScale));
+        setTextScale(a.getFloat(R.styleable.CircleProgressView_textScale, mTextScale));
+        setUnitScale(a.getFloat(R.styleable.CircleProgressView_unitScale, mUnitScale));
 
         setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_seekMode, mSeekModeEnabled));
 

@@ -1,85 +1,83 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-              xmlns:CircleProgressView="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:orientation="vertical"
               android:layout_height="match_parent"
+              android:gravity="top|center"
+              android:orientation="vertical"
+              android:paddingBottom="@dimen/activity_vertical_margin"
               android:paddingLeft="@dimen/activity_horizontal_margin"
               android:paddingRight="@dimen/activity_horizontal_margin"
               android:paddingTop="@dimen/activity_vertical_margin"
-              android:paddingBottom="@dimen/activity_vertical_margin"
-              tools:context=".MainActivity"
-              android:gravity="top|center">
+              tools:context=".MainActivity">
+
 
     <at.grabner.circleprogress.CircleProgressView
-        android:layout_width="277dp"
-        android:layout_height="wrap_content"
         android:id="@+id/circleView"
-        CircleProgressView:contourSize="0dp"
-        CircleProgressView:rimWidth="35dp"
-        CircleProgressView:rimColor="#B2DFDB"
-        CircleProgressView:barWidth="35dp"
+        android:layout_width="277dp"
+        android:layout_height="277dp"
         CircleProgressView:barColor="#00796B"
-        CircleProgressView:showUnit="true"
-        CircleProgressView:unit="%"
-        CircleProgressView:unitColor="#009688"
+        CircleProgressView:barWidth="35dp"
+        CircleProgressView:contourSize="0dp"
+        CircleProgressView:maxValue="100"
+        CircleProgressView:rimColor="#B2DFDB"
+        CircleProgressView:rimWidth="35dp"
+        CircleProgressView:seekMode="true"
         CircleProgressView:textColor="#00796B"
-        CircleProgressView:seekMode="true"/>
-
-
+        CircleProgressView:unit="%"
+        CircleProgressView:unitColor="#009688"/>
 
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Value"
-        android:id="@+id/textView"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <SeekBar
+        android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
 
     <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginTop="34dp"
         android:text="Spinning Bar Length"
-        android:id="@+id/textView2"
-        android:layout_marginTop="34dp"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <SeekBar
+        android:id="@+id/seekBar2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar2"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"/>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:layout_marginTop="8dp">
+        android:orientation="horizontal">
 
         <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spin"
             android:id="@+id/switch1"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginRight="10dp"/>
-
-        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Show Unit"
-            android:id="@+id/switch2"
-            android:layout_marginLeft="10dp"/>
-    </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="10dp"
+            android:text="Spin"/>
 
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Show Unit"/>
+    </LinearLayout>
 
 </LinearLayout>

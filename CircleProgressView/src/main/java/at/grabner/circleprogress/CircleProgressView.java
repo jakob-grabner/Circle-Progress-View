@@ -1,6 +1,5 @@
 package at.grabner.circleprogress;
 
-import android.animation.TimeInterpolator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -19,30 +18,29 @@ import android.graphics.SweepGradient;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-
-import java.lang.ref.WeakReference;
 
 /**
  * An circle view, similar to Android's ProgressBar.
  * Can be used in 'value mode' or 'spinning mode'.
- *
+ * <p/>
  * In spinning mode it can be used like a intermediate progress bar.
- *
+ * <p/>
  * In value mode it can be used as a progress bar or to visualize any other value.
  * Setting a value is fully animated. There are also nice transitions from animating to value mode.
- *
+ * <p/>
  * Typical use case would be to load a new value. During the loading time set the CircleView to spinning.
  * As soon as you got your nur value, just set it {@link #setValueAnimated(float, long) setValueAnimated}, it automatically animated.
  *
- *
  * @author Jakob Grabner, based on the Progress wheel of Todd Davies
  *         https://github.com/Todd-Davies/CircleView
- *
+ *         <p/>
  *         Licensed under the Creative Commons Attribution 3.0 license see:
  *         http://creativecommons.org/licenses/by/3.0/
  */
@@ -51,103 +49,101 @@ public class CircleProgressView extends View {
     /**
      * The log tag.
      */
-    private final static String TAG = "CircleView";
-    private static final boolean DEBUG =  false;
+    private final static String  TAG   = "CircleView";
+    private static final boolean DEBUG = false;
 
     //region members
     //value animation
-    private float mCurrentValue = 42;
-    private float mValueTo = 0;
-    private float mValueFrom = 0;
-    private float mMaxValue = 100;
+    float mCurrentValue = 42;
+    float mValueTo      = 0;
+    float mValueFrom    = 0;
+    float mMaxValue     = 100;
 
     // spinner animation
-    private float mSpinningBarLengthCurrent = 0;
-    private float mSpinningBarLengthOrig = 42;
-    private float mCurrentSpinnerDegreeValue = 0;
+    float mSpinningBarLengthCurrent  = 0;
+    float mSpinningBarLengthOrig     = 42;
+    float mCurrentSpinnerDegreeValue = 0;
 
 
-    //Sizes (with defaults)
-    private int mLayoutHeight = 0;
-    private int mLayoutWidth = 0;
-    private int mFullRadius = 100;
-    private int mCircleRadius = 80;
-    private int mBarWidth = 40;
-    private int mRimWidth = 40;
-    private int mTextSize = -1;
+    private int   mLayoutHeight = 0;
+    private int   mLayoutWidth  = 0;
+    private int   mCircleRadius = 80;
+    private int   mBarWidth     = 40;
+    private int   mRimWidth     = 40;
+    private int   mStartAngle   = 270;
+    private float mContourSize  = 1;
 
-
-    private int mUnitSize = -1;
-    private float mContourSize = 1;
+    //Default text sizes
+    private int   mUnitSize  = 10;
+    private int   mTextSize  = 10;
+    //Text scale
     private float mTextScale = 1;
     private float mUnitScale = 1;
 
     //Padding (with defaults)
-    private int mPaddingTop = 5;
-    private int mPaddingBottom = 5;
-    private int mPaddingLeft = 5;
-    private int mPaddingRight = 5;
+    private int       mPaddingTop            = 5;
+    private int       mPaddingBottom         = 5;
+    private int       mPaddingLeft           = 5;
+    private int       mPaddingRight          = 5;
     //Colors (with defaults)
-    private final int mBarColorStandard =  0xff009688; //stylish blue
-    private int mContourColor = 0xAA000000;
-    private int mSpinnerColor = mBarColorStandard; //stylish blue
-    private int mBackgroundCircleColor = 0x00000000;  //transparent
-    private int mRimColor = 0xAA83d0c9;
-    private int mTextColor = 0xFF000000;
-    private int mUnitColor = 0xFF000000;
-    private int[] mBarColors = new int[]{
-            mBarColorStandard, //stylish blue
-            mBarColorStandard, //stylish blue
+    private int       mBarColorStandard      = 0xff009688; //stylish blue
+    private int       mContourColor          = 0xAA000000;
+    private int       mSpinnerColor          = mBarColorStandard; //stylish blue
+    private int       mBackgroundCircleColor = 0x00000000;  //transparent
+    private int       mRimColor              = 0xAA83d0c9;
+    private int       mTextColor             = 0xFF000000;
+    private int       mUnitColor             = 0xFF000000;
+    private boolean   mIsAutoColorEnabled    = false;
+    private int[]     mBarColors             = new int[]{
+            mBarColorStandard //stylish blue
     };
     //Caps
-    private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
-    private Paint.Cap mSpinnerStrokeCap = Paint.Cap.BUTT;
+    private Paint.Cap mBarStrokeCap          = Paint.Cap.BUTT;
+    private Paint.Cap mSpinnerStrokeCap      = Paint.Cap.BUTT;
     //Paints
-    private Paint mBarPaint = new Paint();
-    private Paint mBarSpinnerPaint = new Paint();
-    private Paint mBackgroundCirclePaint = new Paint();
-    private Paint mRimPaint = new Paint();
-    private Paint mTextPaint = new Paint();
-    private Paint mUnitTextPaint = new Paint();
-    private Paint mContourPaint = new Paint();
+    private Paint     mBarPaint              = new Paint();
+    private Paint     mBarSpinnerPaint       = new Paint();
+    private Paint     mBackgroundCirclePaint = new Paint();
+    private Paint     mRimPaint              = new Paint();
+    private Paint     mTextPaint             = new Paint();
+    private Paint     mUnitTextPaint         = new Paint();
+    private Paint     mContourPaint          = new Paint();
     //Rectangles
-    private RectF mCircleBounds = new RectF();
-    private RectF mInnerCircleBound = new RectF();
+    private RectF     mCircleBounds          = new RectF();
+    private RectF     mInnerCircleBound      = new RectF();
     private PointF mCenter;
 
     /**
      * Maximum size of the text.
      */
-    private RectF mOuterTextBounds = new RectF();
+    private RectF mOuterTextBounds    = new RectF();
     /**
      * Actual size of the text.
      */
-    private RectF mActualTextBounds = new RectF();
-    private RectF mUnitBounds = new RectF();
+    private RectF mActualTextBounds   = new RectF();
+    private RectF mUnitBounds         = new RectF();
     private RectF mCircleOuterContour = new RectF();
     private RectF mCircleInnerContour = new RectF();
     //Animation
     //The amount of degree to move the bar by on each draw
-    private float mSpinSpeed = 2.8f;
+    float  mSpinSpeed         = 2.8f;
     /**
      * The animation duration in ms
      */
-    private double mAnimationDuration = 900;
+    double mAnimationDuration = 900;
 
     //The number of milliseconds to wait in between each draw
-    private int mDelayMillis = 15;
+    int mDelayMillis = 15;
 
     // helper for AnimationState.END_SPINNING_START_ANIMATING
-    private boolean mDrawArcWhileSpinning;
+    boolean mDrawBarWhileSpinning;
 
     //The animation handler containing the animation state machine.
-    private Handler mAnimationHandler = new AnimationHandler(this);
+    Handler mAnimationHandler = new AnimationHandler(this);
 
     //The current state of the animation state machine.
-    private AnimationState mAnimationState = AnimationState.IDLE;
+    AnimationState mAnimationState = AnimationState.IDLE;
 
-    // The interpolator for value animations
-    private TimeInterpolator mInterpolator = new AccelerateDecelerateInterpolator();
 
     //Other
     // The text to show
@@ -156,30 +152,28 @@ public class CircleProgressView extends View {
     private String mUnit = "";
     private int mTextLength;
     /**
-     * Indicates if the given text or the current percentage value should be shown.
-     * true: current value (percentage or value)
-     * false: given text
+     * Indicates if the given text, the current percentage, or the current value should be shown.
      */
-    private boolean mAutoTextValue;
+    private TextMode mTextMode = TextMode.PERCENT;
 
 
-    private boolean mAutoTextSize;
-    private boolean mShowPercentAsAutoValue = true;
-
-
+    private boolean mIsAutoTextSize;
     private boolean mShowUnit = false;
-
 
     //clipping
     private Bitmap mClippingBitmap;
-    private Paint mMaskPaint;
+    private Paint  mMaskPaint;
 
     /**
      * Relative size of the unite string to the value string.
      */
-    private float mRelativeUniteSize = 0.3f;
-    private boolean mSeekModeEnabled = false;
+    private float   mRelativeUniteSize = 0.3f;
+    private boolean mSeekModeEnabled   = false;
 
+
+    private boolean mShowTextWhileSpinning = false;
+
+    AnimationStateChangedListener mAnimationStateChangedListener;
 
     //endregion members
 
@@ -187,7 +181,7 @@ public class CircleProgressView extends View {
      * The constructor for the CircleView
      *
      * @param context The context.
-     * @param attrs The attributes.
+     * @param attrs   The attributes.
      */
     public CircleProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -198,6 +192,7 @@ public class CircleProgressView extends View {
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mMaskPaint.setFilterBitmap(false);
         mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        setupPaints();
     }
 
     /**
@@ -234,21 +229,35 @@ public class CircleProgressView extends View {
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_spinColor, mSpinnerColor));
 
 
-        setSpinningBarLength( a.getFloat(R.styleable.CircleProgressView_spinBarLength,
+        setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_spinBarLength,
                 mSpinningBarLengthOrig));
 
-        setTextSize((int) a.getDimension(R.styleable.CircleProgressView_textSize, mTextSize));
-        setUnitSize((int) a.getDimension(R.styleable.CircleProgressView_unitSize, mUnitSize));
 
-        setTextColor(a.getColor(R.styleable.CircleProgressView_textColor,
-                -1));
-
-        setUnitColor(a.getColor(R.styleable.CircleProgressView_unitColor,
-                -1));
-
+        if (a.hasValue(R.styleable.CircleProgressView_textSize)) {
+            setTextSize((int) a.getDimension(R.styleable.CircleProgressView_textSize, mTextSize));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_unitSize)) {
+            setUnitSize((int) a.getDimension(R.styleable.CircleProgressView_unitSize, mUnitSize));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_textColor)) {
+            setTextColor(a.getColor(R.styleable.CircleProgressView_textColor, mTextColor));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_unitColor)) {
+            setUnitColor(a.getColor(R.styleable.CircleProgressView_unitColor, mUnitColor));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_autoTextColor)) {
+            setAutoTextColor(a.getBoolean(R.styleable.CircleProgressView_autoTextColor, mIsAutoColorEnabled));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_autoTextSize)) {
+            setAutoTextSize(a.getBoolean(R.styleable.CircleProgressView_autoTextSize, mIsAutoTextSize));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_textMode)) {
+            setTextMode(TextMode.values()[a.getInt(R.styleable.CircleProgressView_textMode, 0)]);
+        }
         //if the mText is empty, show current percentage value
-        setText(a.getString(R.styleable.CircleProgressView_text));
-
+        if (a.hasValue(R.styleable.CircleProgressView_text)) {
+            setText(a.getString(R.styleable.CircleProgressView_text));
+        }
 
         setRimColor(a.getColor(R.styleable.CircleProgressView_rimColor,
                 mRimColor));
@@ -269,6 +278,9 @@ public class CircleProgressView extends View {
 
         setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_seekMode, mSeekModeEnabled));
 
+        setStartAngle(a.getInt(R.styleable.CircleProgressView_startAngle, mStartAngle));
+
+        setShowTextWhileSpinning(a.getBoolean(R.styleable.CircleProgressView_showTextInSpinningMode, mShowTextWhileSpinning));
         // Recycle
         a.recycle();
     }
@@ -324,9 +336,8 @@ public class CircleProgressView extends View {
 
     private RectF getInnerCircleRect(RectF _circleBounds) {
 
-        double circleWidth = +_circleBounds.width()-(Math.max(mBarWidth, mRimWidth)) - (mContourSize *2);
-//        circleWidth = _circleBounds.width();
-        double width = ((circleWidth/2d) * Math.sqrt(2d));
+        double circleWidth = +_circleBounds.width() - (Math.max(mBarWidth, mRimWidth)) - (mContourSize * 2);
+        double width = ((circleWidth / 2d) * Math.sqrt(2d));
         float widthDelta = (_circleBounds.width() - (float) width) / 2f;
 
         float scaleX = 1;
@@ -336,11 +347,11 @@ public class CircleProgressView extends View {
             scaleY = 1.33f;
         }
 
-        return new RectF(_circleBounds.left + (widthDelta*scaleX), _circleBounds.top + (widthDelta*scaleY), _circleBounds.right - (widthDelta*scaleX), _circleBounds.bottom -  (widthDelta*scaleY));
+        return new RectF(_circleBounds.left + (widthDelta * scaleX), _circleBounds.top + (widthDelta * scaleY), _circleBounds.right - (widthDelta * scaleX), _circleBounds.bottom - (widthDelta * scaleY));
 
     }
 
-    private  float calcTextSizeForCircle(String _text, Paint _textPaint, RectF _circleBounds) {
+    private float calcTextSizeForCircle(String _text, Paint _textPaint, RectF _circleBounds) {
 
         //get mActualTextBounds bounds
         RectF innerCircleBounds = getInnerCircleRect(_circleBounds);
@@ -392,17 +403,33 @@ public class CircleProgressView extends View {
 
     //region setter / getter
 
+    public void setAnimationStateChangedListener(AnimationStateChangedListener _animationStateChangedListener) {
+        mAnimationStateChangedListener = _animationStateChangedListener;
+    }
+
+
     public int getUnitSize() {
         return mUnitSize;
     }
 
     /**
+     * Text size of the unit string. Only used if text size is also set. (So automatic text size
+     * calculation is off. see {@link #setTextSize(int)}).
+     * If auto text size is on, use {@link #setUnitScale(float)} to scale unit size.
      *
-     * @param _relativeUniteSize The relative size (scale factor) of the unit text size to the text size.
-     *                           Especially useful for autotextsize=true;
+     * @param unitSize The text size of the unit.
      */
-    public void setRelativeUniteSize(float _relativeUniteSize) {
-        mRelativeUniteSize = _relativeUniteSize;
+    public void setUnitSize(@IntRange(from = 0) int unitSize) {
+        mUnitSize = unitSize;
+        mUnitTextPaint.setTextSize(unitSize);
+    }
+
+    public boolean isSeekModeEnabled() {
+        return mSeekModeEnabled;
+    }
+
+    public void setSeekModeEnabled(boolean _seekModeEnabled) {
+        mSeekModeEnabled = _seekModeEnabled;
     }
 
     public Paint.Cap getSpinnerStrokeCap() {
@@ -414,6 +441,7 @@ public class CircleProgressView extends View {
      */
     public void setSpinnerStrokeCap(Paint.Cap _spinnerStrokeCap) {
         mSpinnerStrokeCap = _spinnerStrokeCap;
+        mBarSpinnerPaint.setStrokeCap(_spinnerStrokeCap);
     }
 
     public Paint.Cap getBarStrokeCap() {
@@ -421,11 +449,11 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param _barStrokeCap The stroke cap of the progress bar.
      */
     public void setBarStrokeCap(Paint.Cap _barStrokeCap) {
         mBarStrokeCap = _barStrokeCap;
+        mBarPaint.setStrokeCap(_barStrokeCap);
     }
 
     public int getContourColor() {
@@ -433,12 +461,11 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param _contourColor The color of the background contour of the circle.
      */
-    public void setContourColor(int _contourColor) {
+    public void setContourColor(@ColorInt int _contourColor) {
         mContourColor = _contourColor;
-        setupContourPaint();
+        mContourPaint.setColor(_contourColor);
     }
 
     public float getContourSize() {
@@ -446,30 +473,30 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param _contourSize The size of the background contour of the circle.
      */
-    public void setContourSize(float _contourSize) {
+    public void setContourSize(@FloatRange(from = 0.0) float _contourSize) {
         mContourSize = _contourSize;
-        setupContourPaint();
-
+        mContourPaint.setStrokeWidth(_contourSize);
     }
 
     /**
-     * Set the text in the mCurrentValue bar. If no text (null or empty) is specified,
-     * the current percentage value is used
-     * max value and current value are mandatory to do so).
+     * Set the text in the middle of the circle view.
+     * You need also set the {@link TextMode} to TextMode.TEXT to see the text.
      * @param text The text to show
      */
     public void setText(String text) {
-        if (text == null || text.isEmpty()) {
-            mText = "";
-            mAutoTextValue = true;
-        } else {
-            mText = text;
-            mAutoTextValue = false;
-        }
+        mText = text != null ? text : "";
         invalidate();
+    }
+
+    /**
+     * Sets the auto text mode.
+     *
+     * @param _autoTextValue The mode
+     */
+    public void setTextMode(TextMode _autoTextValue) {
+        mTextMode = _autoTextValue;
     }
 
     public String getUnit() {
@@ -477,7 +504,6 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param _unit The unit to show next to the current value.
      *              You also need to set {@link #setShowUnit(boolean)} to true.
      */
@@ -492,12 +518,13 @@ public class CircleProgressView extends View {
 
     /**
      * Returns the bounding rectangle of the given _text, with the size and style defined in the _textPaint centered in the middle of the _textBounds
-     * @param _text   The text.
-     * @param _textPaint The paint defining the text size and style.
-     * @param _textBounds  The rect where the text will be centered.
-     * @return The boinding box of the text centered in the _textBounds.
+     *
+     * @param _text       The text.
+     * @param _textPaint  The paint defining the text size and style.
+     * @param _textBounds The rect where the text will be centered.
+     * @return The bounding box of the text centered in the _textBounds.
      */
-    private  RectF getTextBounds(String _text, Paint _textPaint, RectF _textBounds) {
+    private RectF getTextBounds(String _text, Paint _textPaint, RectF _textBounds) {
 
         Rect textBoundsTmp = new Rect();
 
@@ -512,78 +539,38 @@ public class CircleProgressView extends View {
         textRect.bottom = textRect.top + textBoundsTmp.height();
 
 
-
         return textRect;
     }
 
-    public boolean isShowPercentAsAutoValue() {
-        return mShowPercentAsAutoValue;
-    }
-
-    /**
-     * If true and no text was specified. The percentage (max value, current value) is shown.
-     * If false the current value is shown. If a text was specified the text is shown.
-     * Default: true
-     * @param _showPercentAsAutoValue bool
-     */
-    public void setShowPercentAsAutoValue(boolean _showPercentAsAutoValue) {
-        mShowPercentAsAutoValue = _showPercentAsAutoValue;
-    }
 
     public int getTextSize() {
         return mTextSize;
     }
 
-    /**
-     * If text size was not set, it is automatically calculated
-     * @param textSize The text size or 0 to enable automatic size (default)
-     */
-    public void setTextSize(int textSize) {
-        if (textSize > 0) {
-            this.mTextSize = textSize;
-            mAutoTextSize = false;
-        } else {
-            mAutoTextSize = true;
-        }
-    }
-
-    public boolean isAutoTextSize() {
-        return mAutoTextSize;
-    }
 
     /**
+     * Text size of the text string. Disables auto text size
+     * If auto text size is on, use {@link #setTextScale(float)} to scale textSize.
      *
+     * @param textSize The text size of the unit.
+     */
+    public void setTextSize(@IntRange(from = 0) int textSize) {
+        this.mTextPaint.setTextSize(textSize);
+        mIsAutoTextSize = false;
+    }
+
+    /**
+     * @return true if auto text size is enabled, false otherwise.
+     */
+    public boolean isAutoTextSize() {
+        return mIsAutoTextSize;
+    }
+
+    /**
      * @param _autoTextSize true to enable auto text size calculation.
      */
     public void setAutoTextSize(boolean _autoTextSize) {
-        mAutoTextSize = _autoTextSize;
-    }
-
-    /**
-     * Text size of the unit string. Only used if text size is also set. (So automatic text size
-     * calculation is off. see {@link #setTextSize(int)}).
-     * If auto text size is on, use {@link #setUnitScale(float)} to scale unit size.
-     * @param unitSize The text size of the unit.
-     */
-    public void setUnitSize(int unitSize) {
-        if (unitSize > 0) {
-            this.mUnitSize = unitSize;
-        } else {
-            this.mUnitSize = 1;
-        }
-    }
-
-    public double getMaxValue() {
-        return mMaxValue;
-    }
-
-    /**
-     * The max value of the progress bar. Used to calculate the percentage of the current value.
-     * The bar fills according to the percentage. The default value is 100.
-     * @param _maxValue The max value.
-     */
-    public void setMaxValue(float _maxValue) {
-        mMaxValue = _maxValue;
+        mIsAutoTextSize = _autoTextSize;
     }
 
     public int getPaddingTop() {
@@ -627,16 +614,16 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
-     * @param _showUnit True to show unite, flas to hide.
+     * @param _showUnit True to show unit, false to hide it.
      */
     public void setShowUnit(boolean _showUnit) {
-        mShowUnit = _showUnit;
-        mTextLength = 0; // triggers recalculating text sizes
-        invalidate();
-        mOuterTextBounds = getInnerCircleRect(mCircleBounds);
+        if (_showUnit != mShowUnit) {
+            mShowUnit = _showUnit;
+            mTextLength = 0; // triggers recalculating text sizes
+            mOuterTextBounds = getInnerCircleRect(mCircleBounds);
+            invalidate();
+        }
     }
-
 
     /**
      * @return The scale value
@@ -648,9 +635,10 @@ public class CircleProgressView extends View {
     /**
      * Scale factor for unit text next to the main text.
      * Only used if auto text size is enabled.
+     *
      * @param _unitScale The scale value.
      */
-    public void setUnitScale(float _unitScale) {
+    public void setUnitScale(@FloatRange(from = 0.0) float _unitScale) {
         mUnitScale = _unitScale;
     }
 
@@ -664,9 +652,10 @@ public class CircleProgressView extends View {
     /**
      * Scale factor for main text in the center of the circle view.
      * Only used if auto text size is enabled.
+     *
      * @param _textScale The scale value.
      */
-    public void setTextScale(float _textScale) {
+    public void setTextScale(@FloatRange(from = 0.0) float _textScale) {
         mTextScale = _textScale;
     }
 
@@ -675,7 +664,7 @@ public class CircleProgressView extends View {
      *
      * @param barLength length in degree
      */
-    public void setSpinningBarLength(float barLength) {
+    public void setSpinningBarLength(@FloatRange(from = 0.0) float barLength) {
         this.mSpinningBarLengthCurrent = mSpinningBarLengthOrig = barLength;
     }
 
@@ -684,56 +673,65 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param barWidth The width of the progress bar in pixel.
      */
-    public void setBarWidth(int barWidth) {
+    public void setBarWidth(@FloatRange(from = 0.0) int barWidth) {
         this.mBarWidth = barWidth;
-        setupBarSpinnerPaint();
-        setupBarPaint();
+        mBarPaint.setStrokeWidth(barWidth);
+        mBarSpinnerPaint.setStrokeWidth(barWidth);
     }
 
     public int[] getBarColors() {
         return mBarColors;
     }
 
-
     /**
-     *Sets the color of progress bar.
-     * @param barColors One or more colors. If more than one color is specified, a gradient of the colors is used.
+     * Sets the color of progress bar.
      *
+     * @param barColors One or more colors. If more than one color is specified, a gradient of the colors is used.
      */
-    public void setBarColor(int... barColors) {
-        if (barColors.length == 1) {
-            this.mBarColors = new int[]{barColors[0], barColors[0]};
+    public void setBarColor(@ColorInt int... barColors) {
+        this.mBarColors = barColors;
+        if (mBarColors.length > 1) {
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
+            Matrix matrix = new Matrix();
+            mBarPaint.getShader().getLocalMatrix(matrix);
+
+            matrix.postTranslate(-mCircleBounds.centerX(), -mCircleBounds.centerY());
+            matrix.postRotate(mStartAngle);
+            matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
+            mBarPaint.getShader().setLocalMatrix(matrix);
+            mBarPaint.setColor(barColors[0]);
+        } else if (mBarColors.length == 0) {
+            mBarPaint.setColor(mBarColors[0]);
+            mBarPaint.setShader(null);
         } else {
-            this.mBarColors = barColors;
+            mBarPaint.setColor(mBarColorStandard);
+            mBarPaint.setShader(null);
         }
-       setupBarPaint();
     }
 
     /**
-     *
      * @param _color The color of progress the bar in spinning mode.
      */
-    public void setSpinBarColor(int _color) {
+    public void setSpinBarColor(@ColorInt int _color) {
         mSpinnerColor = _color;
-        setupBarSpinnerPaint();
+        mBarSpinnerPaint.setColor(mSpinnerColor);
     }
 
     public int getBackgroundCircleColor() {
-        return mBackgroundCircleColor;
+        return mBackgroundCirclePaint.getColor();
     }
 
     /**
      * Sets the background color of the entire Progress Circle.
      * Set the color to 0x00000000 (Color.TRANSPARENT) to hide it.
+     *
      * @param circleColor the color.
      */
-    public void setFillCircleColor(int circleColor) {
-        this.mBackgroundCircleColor = circleColor;
-        setupBackgroundCirclePaint();
-
+    public void setFillCircleColor(@ColorInt int circleColor) {
+        mBackgroundCircleColor = circleColor;
+        mBackgroundCirclePaint.setColor(circleColor);
     }
 
     public int getRimColor() {
@@ -741,12 +739,11 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param rimColor The color of the rim around the Circle.
      */
-    public void setRimColor(int rimColor) {
-        this.mRimColor = rimColor;
-        setupRimPaint();
+    public void setRimColor(@ColorInt int rimColor) {
+        mRimColor = rimColor;
+        mRimPaint.setColor(rimColor);
     }
 
     public Shader getRimShader() {
@@ -757,12 +754,42 @@ public class CircleProgressView extends View {
         this.mRimPaint.setShader(shader);
     }
 
-    public int getTextColor(double value) {
+    private int getTextColor(double value) {
+        if (mBarColors.length > 1) {
+            double percent = 1f / getMaxValue() * value;
+            int low = (int) Math.floor((mBarColors.length-1) * percent);
+            int high = low +1;
+            if (low < 0) {
+                low = 0;
+                high = 1;
+            }else if (high >= mBarColors.length ){
+                low = mBarColors.length -2;
+                high = mBarColors.length -1;
+            }
+            Log.w(TAG, value+" - "+percent+" - " + low + " : " + high + " - " + (float)(1- (((mBarColors.length-1) * percent) % 1d)));
+            return ColorUtils.getRGBGradient(mBarColors[low], mBarColors[high], (float)(1- (((mBarColors.length-1) * percent) % 1d)));
+        }else if(mBarColors.length == 1){
+            return mBarColors[0];
+        }else {
+            return Color.BLACK;
+        }
+    }
 
-        double percent = 1f / getMaxValue() * value;
 
-        int index = (int) (mBarColors.length * percent);
-        return mBarColors[index >= mBarColors.length ? mBarColors.length - 1 : index];
+
+
+    public double getMaxValue() {
+        return mMaxValue;
+    }
+
+    /**
+     * The max value of the progress bar. Used to calculate the percentage of the current value.
+     * The bar fills according to the percentage. The default value is 100.
+     *
+     * @param _maxValue The max value.
+     */
+    public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
+        mMaxValue = _maxValue;
     }
 
     public int getTextColor() {
@@ -770,21 +797,36 @@ public class CircleProgressView extends View {
     }
 
     /**
-     * *
-     * @param textColor the color or -1 to use auto color (depending on bar colors and current value)
+     * Sets the text color.
+     * You also need to  set {@link #setAutoTextColor(boolean)} to false to see your color.
+     * @param textColor the color
      */
-    public void setTextColor(int textColor) {
-        this.mTextColor = textColor;
-        setupTextPaint();
+    public void setTextColor(@ColorInt int textColor) {
+        mTextColor = textColor;
+        mTextPaint.setColor(textColor);
     }
 
     /**
-     * the color or -1 to use auto color (depending on bar colors and current value)
+     * If auto text color is enabled, the text color  and the unit color is always the same as the rim color.
+     * This is useful if the rim has multiple colors (color gradient), than the text will always have
+     * the color of the tip of the rim.
+     *
+     * @param isEnabled true to enable, false to disable
+     */
+    public void setAutoTextColor(boolean isEnabled) {
+        mIsAutoColorEnabled = isEnabled;
+    }
+
+    /**
+     * Sets the unit text color.
+     * Also sets {@link #setAutoTextColor(boolean)} to false
+     *
      * @param unitColor The color.
      */
-    public void setUnitColor(int unitColor) {
-        this.mUnitColor = unitColor;
-        setupUnitTextPaint();
+    public void setUnitColor(@ColorInt int unitColor) {
+        mUnitColor = unitColor;
+        mUnitTextPaint.setColor(unitColor);
+        mIsAutoColorEnabled = false;
     }
 
     public float getSpinSpeed() {
@@ -792,11 +834,12 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *  The amount of degree to move the bar on every draw call.
+     * The amount of degree to move the bar on every draw call.
+     *
      * @param spinSpeed the speed of the spinner
      */
     public void setSpinSpeed(float spinSpeed) {
-        this.mSpinSpeed = spinSpeed;
+        mSpinSpeed = spinSpeed;
     }
 
     public int getRimWidth() {
@@ -804,16 +847,14 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param rimWidth The width in pixel of the rim around the circle
      */
-    public void setRimWidth(int rimWidth) {
-        this.mRimWidth = rimWidth;
-        setupRimPaint();
+    public void setRimWidth(@IntRange(from = 0) int rimWidth) {
+        mRimWidth = rimWidth;
+        mRimPaint.setStrokeWidth(rimWidth);
     }
 
     /**
-     *
      * @return The number of ms to wait between each draw call.
      */
     public int getDelayMillis() {
@@ -821,7 +862,6 @@ public class CircleProgressView extends View {
     }
 
     /**
-     *
      * @param delayMillis The number of ms to wait between each draw call.
      */
     public void setDelayMillis(int delayMillis) {
@@ -834,15 +874,15 @@ public class CircleProgressView extends View {
      */
     public void setClippingBitmap(Bitmap _clippingBitmap) {
 
-        if(getWidth() > 0 && getHeight() > 0){
+        if (getWidth() > 0 && getHeight() > 0) {
             mClippingBitmap = Bitmap.createScaledBitmap(_clippingBitmap, getWidth(), getHeight(), false);
-        }else{
+        } else {
             mClippingBitmap = _clippingBitmap;
         }
         if (mClippingBitmap == null) {
             // enable HW acceleration
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }else{
+        } else {
             // disable HW acceleration
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
@@ -862,14 +902,41 @@ public class CircleProgressView extends View {
         mUnitTextPaint.setTypeface(typeface);
     }
 
-
     /**
-     *
      * @return The relative size (scale factor) of the unit text size to the text size
      */
     public float getRelativeUniteSize() {
         return mRelativeUniteSize;
     }
+
+    /**
+     * @param _relativeUniteSize The relative size (scale factor) of the unit text size to the text size.
+     *                           Especially useful for autotextsize=true;
+     */
+    public void setRelativeUniteSize(@FloatRange(from = 0.0) float _relativeUniteSize) {
+        mRelativeUniteSize = _relativeUniteSize;
+    }
+
+    public boolean isShowTextWhileSpinning() {
+        return mShowTextWhileSpinning;
+    }
+
+    /**
+     * @param shouldDrawTextWhileSpinning True to show text in spinning mode, false to hide it.
+     */
+    public void setShowTextWhileSpinning(boolean shouldDrawTextWhileSpinning) {
+        mShowTextWhileSpinning = shouldDrawTextWhileSpinning;
+    }
+
+    public int getStartAngle() {
+        return mStartAngle;
+    }
+
+    public void setStartAngle(int _startAngle) {
+        // get a angle between 0 and 360
+        mStartAngle = (int) normalizeAngle(_startAngle);
+    }
+
 
     //endregion getter / setter
 
@@ -881,7 +948,7 @@ public class CircleProgressView extends View {
      * Setup all paints.
      * Call only if changes to color or size properties are not visible.
      */
-    public void setupPaints(){
+    public void setupPaints() {
         setupBarPaint();
         setupBarSpinnerPaint();
         setupContourPaint();
@@ -900,12 +967,8 @@ public class CircleProgressView extends View {
     }
 
     private void setupUnitTextPaint() {
-        mUnitTextPaint.setColor(mUnitColor);
         mUnitTextPaint.setStyle(Style.FILL);
         mUnitTextPaint.setAntiAlias(true);
-        if(mUnitSize > 0){
-            mUnitTextPaint.setTextSize(mUnitSize);
-        }
     }
 
     private void setupTextPaint() {
@@ -915,9 +978,8 @@ public class CircleProgressView extends View {
         mTextPaint.setColor(mTextColor);
         mTextPaint.setStyle(Style.FILL);
         mTextPaint.setAntiAlias(true);
-        if (mTextSize > 0) {
-            mTextPaint.setTextSize(mTextSize);
-        }
+        mTextPaint.setTextSize(mTextSize);
+
     }
 
     private void setupBackgroundCirclePaint() {
@@ -942,15 +1004,20 @@ public class CircleProgressView extends View {
     }
 
     private void setupBarPaint() {
-        mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
-        Matrix matrix = new Matrix();
-        mBarPaint.getShader().getLocalMatrix(matrix);
 
-        matrix.postTranslate(-mCircleBounds.centerX(), -mCircleBounds.centerY());
-        matrix.postRotate(-90);
-        matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
-        mBarPaint.getShader().setLocalMatrix(matrix);
+        if (mBarColors.length > 1) {
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
+            Matrix matrix = new Matrix();
+            mBarPaint.getShader().getLocalMatrix(matrix);
 
+            matrix.postTranslate(-mCircleBounds.centerX(), -mCircleBounds.centerY());
+            matrix.postRotate(mStartAngle);
+            matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
+            mBarPaint.getShader().setLocalMatrix(matrix);
+        } else {
+            mBarPaint.setColor(mBarColors[0]);
+            mBarPaint.setShader(null);
+        }
 
         mBarPaint.setAntiAlias(true);
         mBarPaint.setStrokeCap(mBarStrokeCap);
@@ -991,20 +1058,19 @@ public class CircleProgressView extends View {
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
 
-        mFullRadius = (width - mPaddingRight - mBarWidth) / 2;
-        mCircleRadius = (mFullRadius - mBarWidth) + 1;
+        int fullRadius = (width - mPaddingRight - mBarWidth) / 2;
+        mCircleRadius = (fullRadius - mBarWidth) + 1;
         mCenter = new PointF(mCircleBounds.centerX(), mCircleBounds.centerY());
     }
     //endregion Setting up stuff
 
-    //-----------------------
+    //----------------------------------
     //region draw all the things
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
 
         if (DEBUG) {
-
             drawDebug(canvas);
         }
 
@@ -1015,11 +1081,11 @@ public class CircleProgressView extends View {
             canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
         }
         //Draw the rim
-        if(mRimWidth > 0){
+        if (mRimWidth > 0) {
             canvas.drawArc(mCircleBounds, 360, 360, false, mRimPaint);
         }
         //Draw contour
-        if(mContourSize > 0){
+        if (mContourSize > 0) {
             canvas.drawArc(mCircleOuterContour, 360, 360, false, mContourPaint);
             canvas.drawArc(mCircleInnerContour, 360, 360, false, mContourPaint);
         }
@@ -1028,20 +1094,24 @@ public class CircleProgressView extends View {
         //Draw spinner
         if (mAnimationState == AnimationState.SPINNING || mAnimationState == AnimationState.END_SPINNING) {
             drawSpinner(canvas);
+            if (mShowTextWhileSpinning) {
+                drawTextWithUnit(canvas);
+            }
 
         } else if (mAnimationState == AnimationState.END_SPINNING_START_ANIMATING) {
             //draw spinning arc
             drawSpinner(canvas);
 
-            if (mDrawArcWhileSpinning) {
-                drawCircleWithNumber(canvas, degrees);
+            if (mDrawBarWhileSpinning) {
+                drawBar(canvas, degrees);
+                drawTextWithUnit(canvas);
+            } else if (mShowTextWhileSpinning) {
+                drawTextWithUnit(canvas);
             }
 
         } else {
-
-
-            drawCircleWithNumber(canvas, degrees);
-            drawCircleWithNumber(canvas, degrees);
+            drawBar(canvas, degrees);
+            drawTextWithUnit(canvas);
         }
 
 
@@ -1053,15 +1123,16 @@ public class CircleProgressView extends View {
 
     private void drawSpinner(Canvas canvas) {
 
-        if (mSpinningBarLengthCurrent < 0)
+        if (mSpinningBarLengthCurrent < 0) {
             mSpinningBarLengthCurrent = 1;
-        float startAngle = (mCurrentSpinnerDegreeValue - 90 - mSpinningBarLengthCurrent);
+        }
+        float startAngle = (mStartAngle + mCurrentSpinnerDegreeValue - mSpinningBarLengthCurrent);
         canvas.drawArc(mCircleBounds, startAngle, mSpinningBarLengthCurrent, false,
                 mBarSpinnerPaint);
 
     }
 
-    private void drawDebug(Canvas canvas){
+    private void drawDebug(Canvas canvas) {
         Paint innerRectPaint = new Paint();
         innerRectPaint.setColor(Color.YELLOW);
         canvas.drawRect(mCircleBounds, innerRectPaint);
@@ -1070,31 +1141,40 @@ public class CircleProgressView extends View {
         canvas.drawRect(mOuterTextBounds, innerRectPaint);
     }
 
-    private void drawCircleWithNumber(Canvas canvas, float _degrees) {
+    private void drawBar(Canvas _canvas, float _degrees) {
+        _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+
+
+    }
+
+    private void drawTextWithUnit(Canvas canvas) {
 
         final float relativeGap = 1.03f; //gap size between text and unit
         boolean update = false;
-        canvas.drawArc(mCircleBounds, -90, _degrees, false, mBarPaint);
         //Draw Text
-        if (mTextColor == -1) //undefined
-        {
+        if (mIsAutoColorEnabled) {
             mTextPaint.setColor(getTextColor(mCurrentValue));
         }
 
         //set text
-        String text = mText;
-        if (mAutoTextValue) {
-            if (mShowPercentAsAutoValue) {
-                int percent = (int) (100 / mMaxValue * mCurrentValue);
+        String text;
+        switch (mTextMode) {
+            case TEXT:
+            default:
+                text = mText != null ? mText : "";
+                break;
+            case PERCENT:
+                int percent = Math.round(100f / mMaxValue * mCurrentValue);
                 text = String.valueOf(percent);
-            } else {
-                text = String.valueOf((int) mCurrentValue);
-            }
+                break;
+            case VALUE:
+                text = String.valueOf(Math.round(mCurrentValue));
+                break;
         }
 
 
         //set text size and position
-        if (mAutoTextSize) {
+        if (mIsAutoTextSize) {
             // only re-calc position and size if string length changed
             if (mTextLength != text.length()) {
                 update = true;
@@ -1147,15 +1227,14 @@ public class CircleProgressView extends View {
         if (mShowUnit) {
 
 
-            if (mUnitColor == -1) //undefined
-            {
+            if (mIsAutoColorEnabled) {
                 mUnitTextPaint.setColor(getTextColor(mCurrentValue));
             }
             if (update) {
                 //calc unit text position
 
                 //set unit text size
-                if (mAutoTextSize) {
+                if (mIsAutoTextSize) {
                     //calc the rectangle containing the unit text
                     mUnitBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * (1 - mRelativeUniteSize) * relativeGap), mOuterTextBounds.top, mOuterTextBounds.right, mOuterTextBounds.bottom);
                     mUnitTextPaint.setTextSize(calcTextSizeForRect(mUnit, mUnitTextPaint, mUnitBounds) * mUnitScale);
@@ -1165,7 +1244,7 @@ public class CircleProgressView extends View {
                     float gapWidth = (mInnerCircleBound.width() * 0.05f);
                     mUnitTextPaint.setTextSize(mUnitSize);
                     mUnitBounds = getTextBounds(mUnit, mUnitTextPaint, mCircleBounds);
-                    float dx = mActualTextBounds.right - mUnitBounds.left +gapWidth;;
+                    float dx = mActualTextBounds.right - mUnitBounds.left + gapWidth;
                     mUnitBounds.offset(dx, 0);
                 }
                 //move unite to top of text
@@ -1184,10 +1263,12 @@ public class CircleProgressView extends View {
     }
 
     //endregion draw
+    //----------------------------------
 
     //----------------------------------
     //region important getter / setter
     //----------------------------------
+
     /**
      * Turn off spinning mode
      */
@@ -1205,6 +1286,7 @@ public class CircleProgressView extends View {
     /**
      * Set the value of the circle view without an animation.
      * Stops any currently active animations.
+     *
      * @param _value The value.
      */
     public void setValue(float _value) {
@@ -1249,7 +1331,7 @@ public class CircleProgressView extends View {
      * Sets the value of the circle view with an animation.
      * The current value is used as the start value of the animation
      *
-     * @param _valueTo   value after animation
+     * @param _valueTo value after animation
      */
     public void setValueAnimated(float _valueTo) {
 
@@ -1260,365 +1342,7 @@ public class CircleProgressView extends View {
         mAnimationHandler.sendMessage(msg);
     }
 
-    public void setSeekModeEnabled(boolean _seekModeEnabled) {
-        mSeekModeEnabled = _seekModeEnabled;
-    }
-
-    public boolean isSeekModeEnabled() {
-        return mSeekModeEnabled;
-    }
     //endregion important getter / setter
-
-
-    //----------------------------------
-    //region Animation stuff
-    //----------------------------------
-
-    private enum AnimationState {
-
-        IDLE,
-        SPINNING,
-        END_SPINNING,
-        END_SPINNING_START_ANIMATING,
-        ANIMATING
-
-    }
-
-    private enum AnimationMsg {
-
-        START_SPINNING,
-        STOP_SPINNING,
-        SET_VALUE,
-        SET_VALUE_ANIMATED,
-        TICK
-
-    }
-
-
-    private static class AnimationHandler extends Handler {
-        private final WeakReference<CircleProgressView> mCircleViewWeakReference;
-        // Spin bar length in degree at start of animation
-        private float mSpinningBarLengthStart;
-        private long mAnimationStartTime;
-        private long mLengthChangeAnimationStartTime;
-        private TimeInterpolator mLengthChangeInterpolator = new DecelerateInterpolator();
-        private double mLengthChangeAnimationDuration;
-
-
-        AnimationHandler(CircleProgressView _circleView) {
-            super(_circleView.getContext().getMainLooper());
-            mCircleViewWeakReference = new WeakReference<CircleProgressView>(_circleView);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            CircleProgressView circleView = mCircleViewWeakReference.get();
-            if (circleView == null) {
-                return;
-            }
-            AnimationMsg msgType = AnimationMsg.values()[msg.what];
-            if (msgType == AnimationMsg.TICK)
-                removeMessages(AnimationMsg.TICK.ordinal()); // necessary to remove concurrent ticks.
-
-            //if (msgType != AnimationMsg.TICK)
-            //    Log.d("JaGr", TAG + "LOG00099: State:" + circleView.mAnimationState + "     Received: " + msgType);
-
-            switch (circleView.mAnimationState) {
-
-
-                case IDLE:
-                    switch (msgType) {
-
-                        case START_SPINNING:
-                            enterSpinning(circleView);
-
-                            break;
-                        case STOP_SPINNING:
-                            //IGNORE not spinning
-                            break;
-                        case SET_VALUE:
-                            setValue(msg, circleView);
-                            break;
-                        case SET_VALUE_ANIMATED:
-
-                            enterSetValueAnimated(msg, circleView);
-                            break;
-                        case TICK:
-                            removeMessages(AnimationMsg.TICK.ordinal()); // remove old ticks
-                            //IGNORE nothing to do
-                            break;
-                    }
-                    break;
-                case SPINNING:
-                    switch (msgType) {
-
-                        case START_SPINNING:
-                            //IGNORE already spinning
-                            break;
-                        case STOP_SPINNING:
-                            enterEndSpinning(circleView);
-
-                            break;
-                        case SET_VALUE:
-                            setValue(msg, circleView);
-                            break;
-                        case SET_VALUE_ANIMATED:
-                            enterEndSpinningStartAnimating(circleView, msg);
-                            break;
-                        case TICK:
-                            // set length
-
-                            float length_delta = circleView.mSpinningBarLengthCurrent - circleView.mSpinningBarLengthOrig;
-                            float t = (float) ((System.currentTimeMillis() - mLengthChangeAnimationStartTime)
-                                                                / mLengthChangeAnimationDuration);
-                            t = t > 1.0f ? 1.0f : t;
-                            float interpolatedRatio = mLengthChangeInterpolator.getInterpolation(t);
-
-                            if (Math.abs(length_delta) < 1) {
-                                //spinner length is within bounds
-                                circleView.mSpinningBarLengthCurrent = circleView.mSpinningBarLengthOrig;
-                            } else if (circleView.mSpinningBarLengthCurrent < circleView.mSpinningBarLengthOrig) {
-                                //spinner to short, --> grow
-                                circleView.mSpinningBarLengthCurrent = mSpinningBarLengthStart + ((circleView.mSpinningBarLengthOrig - mSpinningBarLengthStart) * interpolatedRatio);
-                            } else {
-                                //spinner to long, --> shrink
-                                circleView.mSpinningBarLengthCurrent = (mSpinningBarLengthStart - ((mSpinningBarLengthStart - circleView.mSpinningBarLengthOrig) * interpolatedRatio));
-                            }
-
-                            circleView.mCurrentSpinnerDegreeValue += circleView.mSpinSpeed; // spin speed value (in degree)
-
-                            if (circleView.mCurrentSpinnerDegreeValue > 360) {
-                                circleView.mCurrentSpinnerDegreeValue = 0;
-                            }
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-                            circleView.invalidate();
-                            break;
-                    }
-
-                    break;
-                case END_SPINNING:
-                    switch (msgType) {
-
-                        case START_SPINNING:
-                            circleView.mAnimationState = AnimationState.SPINNING;
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-
-                            break;
-                        case STOP_SPINNING:
-                            //IGNORE already stopping
-                            break;
-                        case SET_VALUE:
-                            setValue(msg, circleView);
-                            break;
-                        case SET_VALUE_ANIMATED:
-                            enterEndSpinningStartAnimating(circleView, msg);
-
-                            break;
-                        case TICK:
-
-                            float t = (float) ((System.currentTimeMillis() - mLengthChangeAnimationStartTime)
-                                    / mLengthChangeAnimationDuration);
-                            t = t > 1.0f ? 1.0f : t;
-                            float interpolatedRatio = mLengthChangeInterpolator.getInterpolation(t);
-                            circleView.mSpinningBarLengthCurrent = (mSpinningBarLengthStart) * (1f - interpolatedRatio);
-
-                            circleView.mCurrentSpinnerDegreeValue += circleView.mSpinSpeed; // spin speed value (not in percent)
-                            if (circleView.mSpinningBarLengthCurrent < 0.01f) {
-                                //end here, spinning finished
-                                circleView.mAnimationState = AnimationState.IDLE;
-                            }
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-                            circleView.invalidate();
-                            break;
-                    }
-
-                    break;
-                case END_SPINNING_START_ANIMATING:
-                    switch (msgType) {
-
-                        case START_SPINNING:
-                            circleView.mDrawArcWhileSpinning = false;
-                            enterSpinning(circleView);
-
-                            break;
-                        case STOP_SPINNING:
-                            //IGNORE already stopping
-                            break;
-                        case SET_VALUE:
-                            circleView.mDrawArcWhileSpinning = false;
-                            setValue(msg, circleView);
-
-                            break;
-                        case SET_VALUE_ANIMATED:
-                            circleView.mValueFrom = 0; // start from zero after spinning
-                            circleView.mValueTo = ((float[]) msg.obj)[1];
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-
-                            break;
-                        case TICK:
-                            //shrink spinner till it has its original length
-                            if (circleView.mSpinningBarLengthCurrent > circleView.mSpinningBarLengthOrig && !circleView.mDrawArcWhileSpinning) {
-                                //spinner to long, --> shrink
-                                float t = (float) ((System.currentTimeMillis() - mLengthChangeAnimationStartTime)
-                                        / mLengthChangeAnimationDuration);
-                                t = t > 1.0f ? 1.0f : t;
-                                float interpolatedRatio = mLengthChangeInterpolator.getInterpolation(t);
-                                circleView.mSpinningBarLengthCurrent = (mSpinningBarLengthStart) * (1f - interpolatedRatio);
-                            }
-
-                            // move spinner for spin speed value (not in percent)
-                            circleView.mCurrentSpinnerDegreeValue += circleView.mSpinSpeed;
-
-                            //if the start of the spinner reaches zero, start animating the value
-                            if (circleView.mCurrentSpinnerDegreeValue > 360 && !circleView.mDrawArcWhileSpinning) {
-                                mAnimationStartTime = System.currentTimeMillis();
-                                circleView.mDrawArcWhileSpinning = true;
-                                initReduceAnimation(circleView);
-                            }
-
-                            //value is already animating, calc animation value and reduce spinner
-                            if (circleView.mDrawArcWhileSpinning) {
-                                circleView.mCurrentSpinnerDegreeValue = 360;
-                                circleView.mSpinningBarLengthCurrent -= circleView.mSpinSpeed;
-                                calcNextAnimationValue(circleView);
-
-                                float t = (float) ((System.currentTimeMillis() - mLengthChangeAnimationStartTime)
-                                        / mLengthChangeAnimationDuration);
-                                t = t > 1.0f ? 1.0f : t;
-                                float interpolatedRatio = mLengthChangeInterpolator.getInterpolation(t);
-                                circleView.mSpinningBarLengthCurrent = (mSpinningBarLengthStart) * (1f - interpolatedRatio);
-                            }
-
-                            //spinner is no longer visible switch state to animating
-                            if (circleView.mSpinningBarLengthCurrent < 0.1) {
-                                //spinning finished, start animating the current value
-                                circleView.mAnimationState = AnimationState.ANIMATING;
-                                circleView.invalidate();
-                                circleView.mDrawArcWhileSpinning = false;
-                                circleView.mSpinningBarLengthCurrent = circleView.mSpinningBarLengthOrig;
-
-                            } else {
-                                circleView.invalidate();
-                            }
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-                            break;
-                    }
-
-                    break;
-                case ANIMATING:
-                    switch (msgType) {
-
-                        case START_SPINNING:
-                            enterSpinning(circleView);
-                            break;
-                        case STOP_SPINNING:
-                            //Ignore, not spinning
-                            break;
-                        case SET_VALUE:
-                            setValue(msg, circleView);
-                            break;
-                        case SET_VALUE_ANIMATED:
-                            mAnimationStartTime = System.currentTimeMillis();
-                            //restart animation from current value
-                            circleView.mValueFrom = circleView.mCurrentValue;
-                            circleView.mValueTo = ((float[]) msg.obj)[1];
-
-                            break;
-                        case TICK:
-                            if(calcNextAnimationValue(circleView)){
-                                //animation finished
-                                circleView.mAnimationState = AnimationState.IDLE;
-                                circleView.mCurrentValue = circleView.mValueTo;
-                            }
-                            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-                            circleView.invalidate();
-                            break;
-                    }
-
-                    break;
-
-            }
-        }
-
-        private void enterSetValueAnimated(Message msg, CircleProgressView _circleView) {
-            _circleView.mValueFrom = ((float[]) msg.obj)[0];
-            _circleView.mValueTo = ((float[]) msg.obj)[1];
-            mAnimationStartTime = System.currentTimeMillis();
-            _circleView.mAnimationState = AnimationState.ANIMATING;
-
-            _circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), _circleView.mDelayMillis);
-        }
-
-        private void enterEndSpinningStartAnimating(CircleProgressView circleView, Message msg) {
-            circleView.mAnimationState = AnimationState.END_SPINNING_START_ANIMATING;
-
-            circleView.mValueFrom = 0; // start from zero after spinning
-            circleView.mValueTo = ((float[]) msg.obj)[1];
-
-            mLengthChangeAnimationStartTime = System.currentTimeMillis();
-            mSpinningBarLengthStart = circleView.mSpinningBarLengthCurrent;
-
-            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-
-        }
-
-        private void enterEndSpinning(CircleProgressView circleView) {
-            circleView.mAnimationState = AnimationState.END_SPINNING;
-
-            initReduceAnimation(circleView);
-            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-        }
-
-        private void initReduceAnimation(CircleProgressView circleView) {
-            float degreesTillFinish = circleView.mSpinningBarLengthCurrent;
-            float stepsTillFinish = degreesTillFinish / circleView.mSpinSpeed;
-            mLengthChangeAnimationDuration = (stepsTillFinish * circleView.mDelayMillis) * 2f;
-
-            mLengthChangeAnimationStartTime = System.currentTimeMillis();
-            mSpinningBarLengthStart = circleView.mSpinningBarLengthCurrent;
-        }
-
-        private void enterSpinning(CircleProgressView circleView) {
-            circleView.mAnimationState = AnimationState.SPINNING;
-            circleView.mSpinningBarLengthCurrent = (360f / circleView.mMaxValue * circleView.mCurrentValue);
-            circleView.mCurrentSpinnerDegreeValue = (360f / circleView.mMaxValue * circleView.mCurrentValue);
-            mLengthChangeAnimationStartTime = System.currentTimeMillis();
-            mSpinningBarLengthStart = circleView.mSpinningBarLengthCurrent;
-
-
-            //calc animation time
-            float stepsTillFinish = circleView.mSpinningBarLengthOrig / circleView.mSpinSpeed;
-            mLengthChangeAnimationDuration = ((stepsTillFinish * circleView.mDelayMillis) * 2f);
-
-
-            circleView.mAnimationHandler.sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mDelayMillis);
-        }
-
-        /**
-         * *
-         * @param _circleView the circle view
-         * @return false if animation still running, true if animation is finished.
-         */
-        private boolean calcNextAnimationValue(CircleProgressView _circleView) {
-            float t = (float) ((System.currentTimeMillis() - mAnimationStartTime)
-                    / _circleView.mAnimationDuration);
-            t = t > 1.0f ? 1.0f : t;
-            float interpolatedRatio = _circleView.mInterpolator.getInterpolation(t);
-
-            _circleView.mCurrentValue = (_circleView.mValueFrom + ((_circleView.mValueTo - _circleView.mValueFrom) * interpolatedRatio));
-
-            return t >= 1;
-        }
-
-        private void setValue(Message msg, CircleProgressView _circleView) {
-            _circleView.mValueFrom = _circleView.mValueTo;
-            _circleView.mCurrentValue = _circleView.mValueTo = ((float[]) msg.obj)[0];
-            _circleView.mAnimationState = AnimationState.IDLE;
-            _circleView.invalidate();
-        }
-    }
-
-    //endregion Animation stuff
     //----------------------------------
 
     //----------------------------------
@@ -1638,18 +1362,18 @@ public class CircleProgressView extends View {
             case MotionEvent.ACTION_UP: {
                 mTouchEventCount = 0;
                 PointF point = new PointF(event.getX(), event.getY());
-                float angle = (float) calcRotationAngleInDegrees(mCenter, point);
+                float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
                 setValueAnimated(mMaxValue / 360f * angle, 800);
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
-                mTouchEventCount ++;
-                if (mTouchEventCount > 5) {
+                mTouchEventCount++;
+                if (mTouchEventCount > 5) { //touch/move guard
                     PointF point = new PointF(event.getX(), event.getY());
-                    float angle = (float) calcRotationAngleInDegrees(mCenter, point);
+                    float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
                     setValue(mMaxValue / 360f * angle);
                     return true;
-                }else {
+                } else {
                     return false;
                 }
 
@@ -1663,23 +1387,30 @@ public class CircleProgressView extends View {
         return super.onTouchEvent(event);
     }
 
+    /**
+     * @param _angle The angle in degree to normalize
+     * @return the angle between 0 (EAST) and 360
+     */
+    public static float normalizeAngle(float _angle) {
+        return (((_angle % 360) + 360) % 360);
+    }
+
 
     /**
      * Calculates the angle from centerPt to targetPt in degrees.
      * The return should range from [0,360), rotating CLOCKWISE,
-     * 0 and 360 degrees represents NORTH,
-     * 90 degrees represents EAST, etc...
-     *
+     * 0 and 360 degrees represents EAST,
+     * 90 degrees represents SOUTH, etc...
+     * <p/>
      * Assumes all points are in the same coordinate space.  If they are not,
      * you will need to call SwingUtilities.convertPointToScreen or equivalent
      * on all arguments before passing them  to this function.
      *
-     * @param centerPt   Point we are rotating around.
-     * @param targetPt   Point we want to calcuate the angle to.
+     * @param centerPt Point we are rotating around.
+     * @param targetPt Point we want to calculate the angle to.
      * @return angle in degrees.  This is the angle from centerPt to targetPt.
      */
-    public static double calcRotationAngleInDegrees(PointF centerPt, PointF targetPt)
-    {
+    public static double calcRotationAngleInDegrees(PointF centerPt, PointF targetPt) {
         // calculate the angle theta from the deltaY and deltaX values
         // (atan2 returns radians values from [-PI,PI])
         // 0 currently points EAST.
@@ -1691,7 +1422,7 @@ public class CircleProgressView extends View {
         // (this makes 0 point NORTH)
         // NOTE: adding to an angle rotates it clockwise.
         // subtracting would rotate it counter-clockwise
-        theta += Math.PI/2.0;
+//        theta += Math.PI/2.0;
 
         // convert from radians to degrees
         // this will give you an angle from [0->270],[-180,0]
@@ -1713,3 +1444,5 @@ public class CircleProgressView extends View {
     //----------------------------------
 
 }
+
+

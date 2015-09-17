@@ -22,7 +22,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -766,7 +765,6 @@ public class CircleProgressView extends View {
                 low = mBarColors.length -2;
                 high = mBarColors.length -1;
             }
-            Log.w(TAG, value+" - "+percent+" - " + low + " : " + high + " - " + (float)(1- (((mBarColors.length-1) * percent) % 1d)));
             return ColorUtils.getRGBGradient(mBarColors[low], mBarColors[high], (float)(1- (((mBarColors.length-1) * percent) % 1d)));
         }else if(mBarColors.length == 1){
             return mBarColors[0];

@@ -3,6 +3,8 @@ A animated circle view, similar to Android's ProgressBar. Can be used in 'value 
 
 ![MainImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleProgressView.png)
 
+![BlockImage](https://github.com/captainbupt/Circle-Progress-View/blob/master/media/CircleProgressViewBlock.png)
+
 ## Fully animated:
 ![animation demo](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/demo.gif)
 

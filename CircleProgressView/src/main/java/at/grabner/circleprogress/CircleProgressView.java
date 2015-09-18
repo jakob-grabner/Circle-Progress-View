@@ -48,84 +48,84 @@ public class CircleProgressView extends View {
     /**
      * The log tag.
      */
-    private final static String  TAG   = "CircleView";
+    private final static String TAG = "CircleView";
     private static final boolean DEBUG = false;
 
     //region members
     //value animation
     float mCurrentValue = 42;
-    float mValueTo      = 0;
-    float mValueFrom    = 0;
-    float mMaxValue     = 100;
+    float mValueTo = 0;
+    float mValueFrom = 0;
+    float mMaxValue = 100;
 
     // spinner animation
-    float mSpinningBarLengthCurrent  = 0;
-    float mSpinningBarLengthOrig     = 42;
+    float mSpinningBarLengthCurrent = 0;
+    float mSpinningBarLengthOrig = 42;
     float mCurrentSpinnerDegreeValue = 0;
 
 
-    private int   mLayoutHeight = 0;
-    private int   mLayoutWidth  = 0;
-    private int   mCircleRadius = 80;
-    private int   mBarWidth     = 40;
-    private int   mRimWidth     = 40;
-    private int   mStartAngle   = 270;
-    private float mContourSize  = 1;
+    private int mLayoutHeight = 0;
+    private int mLayoutWidth = 0;
+    private int mCircleRadius = 80;
+    private int mBarWidth = 40;
+    private int mRimWidth = 40;
+    private int mStartAngle = 270;
+    private float mContourSize = 1;
 
     //Default text sizes
-    private int   mUnitSize  = 10;
-    private int   mTextSize  = 10;
+    private int mUnitSize = 10;
+    private int mTextSize = 10;
     //Text scale
     private float mTextScale = 1;
     private float mUnitScale = 1;
 
     //Padding (with defaults)
-    private int       mPaddingTop            = 5;
-    private int       mPaddingBottom         = 5;
-    private int       mPaddingLeft           = 5;
-    private int       mPaddingRight          = 5;
+    private int mPaddingTop = 5;
+    private int mPaddingBottom = 5;
+    private int mPaddingLeft = 5;
+    private int mPaddingRight = 5;
     //Colors (with defaults)
-    private int       mBarColorStandard      = 0xff009688; //stylish blue
-    private int       mContourColor          = 0xAA000000;
-    private int       mSpinnerColor          = mBarColorStandard; //stylish blue
-    private int       mBackgroundCircleColor = 0x00000000;  //transparent
-    private int       mRimColor              = 0xAA83d0c9;
-    private int       mTextColor             = 0xFF000000;
-    private int       mUnitColor             = 0xFF000000;
-    private boolean   mIsAutoColorEnabled    = false;
-    private int[]     mBarColors             = new int[]{
+    private int mBarColorStandard = 0xff009688; //stylish blue
+    private int mContourColor = 0xAA000000;
+    private int mSpinnerColor = mBarColorStandard; //stylish blue
+    private int mBackgroundCircleColor = 0x00000000;  //transparent
+    private int mRimColor = 0xAA83d0c9;
+    private int mTextColor = 0xFF000000;
+    private int mUnitColor = 0xFF000000;
+    private boolean mIsAutoColorEnabled = false;
+    private int[] mBarColors = new int[]{
             mBarColorStandard //stylish blue
     };
     //Caps
-    private Paint.Cap mBarStrokeCap          = Paint.Cap.BUTT;
-    private Paint.Cap mSpinnerStrokeCap      = Paint.Cap.BUTT;
+    private Paint.Cap mBarStrokeCap = Paint.Cap.BUTT;
+    private Paint.Cap mSpinnerStrokeCap = Paint.Cap.BUTT;
     //Paints
-    private Paint     mBarPaint              = new Paint();
-    private Paint     mBarSpinnerPaint       = new Paint();
-    private Paint     mBackgroundCirclePaint = new Paint();
-    private Paint     mRimPaint              = new Paint();
-    private Paint     mTextPaint             = new Paint();
-    private Paint     mUnitTextPaint         = new Paint();
-    private Paint     mContourPaint          = new Paint();
+    private Paint mBarPaint = new Paint();
+    private Paint mBarSpinnerPaint = new Paint();
+    private Paint mBackgroundCirclePaint = new Paint();
+    private Paint mRimPaint = new Paint();
+    private Paint mTextPaint = new Paint();
+    private Paint mUnitTextPaint = new Paint();
+    private Paint mContourPaint = new Paint();
     //Rectangles
-    private RectF     mCircleBounds          = new RectF();
-    private RectF     mInnerCircleBound      = new RectF();
+    private RectF mCircleBounds = new RectF();
+    private RectF mInnerCircleBound = new RectF();
     private PointF mCenter;
 
     /**
      * Maximum size of the text.
      */
-    private RectF mOuterTextBounds    = new RectF();
+    private RectF mOuterTextBounds = new RectF();
     /**
      * Actual size of the text.
      */
-    private RectF mActualTextBounds   = new RectF();
-    private RectF mUnitBounds         = new RectF();
+    private RectF mActualTextBounds = new RectF();
+    private RectF mUnitBounds = new RectF();
     private RectF mCircleOuterContour = new RectF();
     private RectF mCircleInnerContour = new RectF();
     //Animation
     //The amount of degree to move the bar by on each draw
-    float  mSpinSpeed         = 2.8f;
+    float mSpinSpeed = 2.8f;
     /**
      * The animation duration in ms
      */
@@ -161,18 +161,24 @@ public class CircleProgressView extends View {
 
     //clipping
     private Bitmap mClippingBitmap;
-    private Paint  mMaskPaint;
+    private Paint mMaskPaint;
 
     /**
      * Relative size of the unite string to the value string.
      */
-    private float   mRelativeUniteSize = 0.3f;
-    private boolean mSeekModeEnabled   = false;
+    private float mRelativeUniteSize = 0.3f;
+    private boolean mSeekModeEnabled = false;
 
 
     private boolean mShowTextWhileSpinning = false;
 
     AnimationStateChangedListener mAnimationStateChangedListener;
+
+    private boolean mShowBlock = false;
+    private int mBlockCount = 18;
+    private float mBlockScale = 0.9f;
+    private float mBlockDegree = 360 / mBlockCount;
+    private float mBlockScaleDegree = mBlockDegree * mBlockScale;
 
     //endregion members
 
@@ -280,6 +286,12 @@ public class CircleProgressView extends View {
         setStartAngle(a.getInt(R.styleable.CircleProgressView_startAngle, mStartAngle));
 
         setShowTextWhileSpinning(a.getBoolean(R.styleable.CircleProgressView_showTextInSpinningMode, mShowTextWhileSpinning));
+
+        if (a.hasValue(R.styleable.CircleProgressView_blockCount)) {
+            setBlockCount(a.getInt(R.styleable.CircleProgressView_blockCount, 1));
+            setBlockScale(a.getFloat(R.styleable.CircleProgressView_blockScale, 0.9f));
+        }
+
         // Recycle
         a.recycle();
     }
@@ -482,6 +494,7 @@ public class CircleProgressView extends View {
     /**
      * Set the text in the middle of the circle view.
      * You need also set the {@link TextMode} to TextMode.TEXT to see the text.
+     *
      * @param text The text to show
      */
     public void setText(String text) {
@@ -757,24 +770,22 @@ public class CircleProgressView extends View {
     private int getTextColor(double value) {
         if (mBarColors.length > 1) {
             double percent = 1f / getMaxValue() * value;
-            int low = (int) Math.floor((mBarColors.length-1) * percent);
-            int high = low +1;
+            int low = (int) Math.floor((mBarColors.length - 1) * percent);
+            int high = low + 1;
             if (low < 0) {
                 low = 0;
                 high = 1;
-            }else if (high >= mBarColors.length ){
-                low = mBarColors.length -2;
-                high = mBarColors.length -1;
+            } else if (high >= mBarColors.length) {
+                low = mBarColors.length - 2;
+                high = mBarColors.length - 1;
             }
-            return ColorUtils.getRGBGradient(mBarColors[low], mBarColors[high], (float)(1- (((mBarColors.length-1) * percent) % 1d)));
-        }else if(mBarColors.length == 1){
+            return ColorUtils.getRGBGradient(mBarColors[low], mBarColors[high], (float) (1 - (((mBarColors.length - 1) * percent) % 1d)));
+        } else if (mBarColors.length == 1) {
             return mBarColors[0];
-        }else {
+        } else {
             return Color.BLACK;
         }
     }
-
-
 
 
     public double getMaxValue() {
@@ -798,6 +809,7 @@ public class CircleProgressView extends View {
     /**
      * Sets the text color.
      * You also need to  set {@link #setAutoTextColor(boolean)} to false to see your color.
+     *
      * @param textColor the color
      */
     public void setTextColor(@ColorInt int textColor) {
@@ -936,6 +948,39 @@ public class CircleProgressView extends View {
         mStartAngle = (int) normalizeAngle(_startAngle);
     }
 
+    public void setShowBlock(boolean showBlock) {
+        mShowBlock = showBlock;
+    }
+
+    public void setBlockCount(int blockCount) {
+        if (blockCount > 1) {
+            mShowBlock = true;
+            mBlockCount = blockCount;
+            mBlockDegree = 360.0f / blockCount;
+            mBlockScaleDegree = mBlockDegree * mBlockScale;
+        } else {
+            mShowBlock = false;
+        }
+    }
+
+    public void setBlockScale(float blockScale) {
+        if (blockScale >= 0.0f && blockScale <= 1.0f) {
+            mBlockScale = blockScale;
+            mBlockScaleDegree = mBlockDegree * blockScale;
+        }
+    }
+
+    public boolean isShowBlock() {
+        return mShowBlock;
+    }
+
+    public int getBlockCount() {
+        return mBlockCount;
+    }
+
+    public float getBlockScale() {
+        return mBlockScale;
+    }
 
     //endregion getter / setter
 
@@ -1081,7 +1126,11 @@ public class CircleProgressView extends View {
         }
         //Draw the rim
         if (mRimWidth > 0) {
-            canvas.drawArc(mCircleBounds, 360, 360, false, mRimPaint);
+            if (!mShowBlock) {
+                canvas.drawArc(mCircleBounds, 360, 360, false, mRimPaint);
+            } else {
+                drawBlocks(canvas, mCircleBounds, mStartAngle, 360, false, mRimPaint);
+            }
         }
         //Draw contour
         if (mContourSize > 0) {
@@ -1140,10 +1189,22 @@ public class CircleProgressView extends View {
         canvas.drawRect(mOuterTextBounds, innerRectPaint);
     }
 
+
     private void drawBar(Canvas _canvas, float _degrees) {
-        _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+        if (!mShowBlock) {
+            _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+        } else {
+            drawBlocks(_canvas, mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+        }
 
+    }
 
+    private void drawBlocks(Canvas _canvas, RectF circleBounds, float startAngle, float _degrees, boolean userCenter, Paint paint) {
+        float tmpDegree = 0.0f;
+        while (tmpDegree < _degrees) {
+            _canvas.drawArc(circleBounds, startAngle + tmpDegree, Math.min(mBlockScaleDegree, _degrees - tmpDegree), userCenter, paint);
+            tmpDegree += mBlockDegree;
+        }
     }
 
     private void drawTextWithUnit(Canvas canvas) {

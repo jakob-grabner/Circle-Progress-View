@@ -44,6 +44,10 @@
         <!-- Seek mode-->
         <attr name="seekMode" format="boolean"/>
 
+        <!-- Block -->
+        <attr name="blockCount" format="integer"/>
+        <attr name="blockScale" format="float"/>
+
     </declare-styleable>
     <attr name="textMode" format="enum">
         <enum name="Text" value="0"/>

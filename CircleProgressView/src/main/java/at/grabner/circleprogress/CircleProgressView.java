@@ -555,6 +555,7 @@ public class CircleProgressView extends View {
      */
     public void setTextSize(@IntRange(from = 0) int textSize) {
         this.mTextPaint.setTextSize(textSize);
+        mTextSize = textSize;
         mIsAutoTextSize = false;
     }
 

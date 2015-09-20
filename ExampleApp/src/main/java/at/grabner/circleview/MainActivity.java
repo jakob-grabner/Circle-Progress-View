@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
         mCircleView.setShowUnit(mShowUnit);
 
         //text sizes
-        mCircleView.setTextSize(20); // text size set, auto text size off
-        mCircleView.setUnitSize(15); // if i set the text size i also have to set the unit size
+        mCircleView.setTextSize(50); // text size set, auto text size off
+        mCircleView.setUnitSize(40); // if i set the text size i also have to set the unit size
         mCircleView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
         //if you want the calculated text sizes to be bigger/smaller you can do so via
         mCircleView.setUnitScale(0.9f);

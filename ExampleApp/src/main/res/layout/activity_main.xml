@@ -18,6 +18,8 @@
         android:layout_height="277dp"
         CircleProgressView:barColor="#00796B"
         CircleProgressView:barWidth="35dp"
+        CircleProgressView:blockCount="18"
+        CircleProgressView:blockScale="0.9"
         CircleProgressView:contourSize="0dp"
         CircleProgressView:maxValue="100"
         CircleProgressView:rimColor="#B2DFDB"

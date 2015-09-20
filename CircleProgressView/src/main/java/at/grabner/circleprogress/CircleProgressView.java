@@ -1120,8 +1120,9 @@ public class CircleProgressView extends View {
 
         float degrees = (360f / mMaxValue * mCurrentValue);
 
-        //Draw the background circle
-        if (mBackgroundCircleColor > 0) {
+        // Draw the background circle
+        // If the color is white, it's value will be -1.
+        if (mBackgroundCircleColor != 0) {
             canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
         }
         //Draw the rim

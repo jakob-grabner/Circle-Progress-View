@@ -1,5 +1,6 @@
 package at.grabner.circleprogress;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -16,11 +17,13 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.SweepGradient;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,7 +38,7 @@ import android.view.View;
  * Setting a value is fully animated. There are also nice transitions from animating to value mode.
  * <p/>
  * Typical use case would be to load a new value. During the loading time set the CircleView to spinning.
- * As soon as you got your nur value, just set it {@link #setValueAnimated(float, long) setValueAnimated}, it automatically animated.
+ * As soon as you get your value, just set it with {@link #setValueAnimated(float, long)}.
  *
  * @author Jakob Grabner, based on the Progress wheel of Todd Davies
  *         https://github.com/Todd-Davies/CircleView
@@ -43,6 +46,7 @@ import android.view.View;
  *         Licensed under the Creative Commons Attribution 3.0 license see:
  *         http://creativecommons.org/licenses/by/3.0/
  */
+@SuppressWarnings("unused")
 public class CircleProgressView extends View {
 
     /**
@@ -313,7 +317,7 @@ public class CircleProgressView extends View {
         // pass the view has not gotten its final size yet (this happens first
         // at the start of the layout pass) so we have to use getMeasuredWidth()
         // and getMeasuredHeight().
-        int size = 0;
+        int size;
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
@@ -883,6 +887,7 @@ public class CircleProgressView extends View {
      * @param _clippingBitmap The bitmap used for clipping. Set to null to disable clipping.
      *                        Default: No clipping.
      */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setClippingBitmap(Bitmap _clippingBitmap) {
 
         if (getWidth() > 0 && getHeight() > 0) {
@@ -1121,7 +1126,6 @@ public class CircleProgressView extends View {
         float degrees = (360f / mMaxValue * mCurrentValue);
 
         // Draw the background circle
-        // If the color is white, it's value will be -1.
         if (mBackgroundCircleColor != 0) {
             canvas.drawArc(mInnerCircleBound, 360, 360, false, mBackgroundCirclePaint);
         }
@@ -1412,7 +1416,7 @@ public class CircleProgressView extends View {
     private int mTouchEventCount;
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
 
         if (mSeekModeEnabled == false) {
             return super.onTouchEvent(event);

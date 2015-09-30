@@ -1,16 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '22.0.1'
 
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
     repositories {
         maven { url "https://jitpack.io" }
     }
-
     defaultConfig {
         applicationId "at.grabner.circleview"
-        minSdkVersion 9
+        minSdkVersion 11
         targetSdkVersion 23
         versionCode 2
         versionName "1.1"
@@ -20,6 +19,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug{
+            minifyEnabled false
+        }
+    }
+    productFlavors {
     }
 }
 
@@ -27,5 +31,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile project(':CircleProgressView')
-//    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.1'
+    //    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.1'
 }

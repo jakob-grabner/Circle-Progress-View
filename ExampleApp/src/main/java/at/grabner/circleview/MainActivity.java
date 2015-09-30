@@ -17,10 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     CircleProgressView mCircleView;
-    Switch             mSwitchSpin;
-    Switch             mSwitchShowUnit;
-    SeekBar            mSeekBar;
-    SeekBar            mSeekBarSpinnerLength;
+    Switch mSwitchSpin;
+    Switch mSwitchShowUnit;
+    SeekBar mSeekBar;
+    SeekBar mSeekBarSpinnerLength;
     Boolean mShowUnit = true;
 
     @Override
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         //color
         //you can use a gradient
-        mCircleView.setBarColor(getResources().getColor(R.color.primary_color),getResources().getColor(R.color.secondary_color));
+        mCircleView.setBarColor(getResources().getColor(R.color.primary_color), getResources().getColor(R.color.secondary_color));
 
         //colors of text and unit can be set via
         mCircleView.setTextColor(Color.RED);
@@ -119,8 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
         mSwitchShowUnit.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener()
-                {
+                new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         mCircleView.setShowUnit(isChecked);
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         //Setup SeekBar
-        mSeekBar = (SeekBar)findViewById(R.id.seekBar);
+        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
 
         mSeekBar.setMax(100);
         mSeekBar.setOnSeekBarChangeListener(

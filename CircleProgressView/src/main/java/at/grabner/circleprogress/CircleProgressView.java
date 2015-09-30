@@ -25,6 +25,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -136,7 +137,7 @@ public class CircleProgressView extends View {
     double mAnimationDuration = 900;
 
     //The number of milliseconds to wait in between each draw
-    int mDelayMillis = 15;
+    int mFrameDelayMillis = 10;
 
     // helper for AnimationState.END_SPINNING_START_ANIMATING
     boolean mDrawBarWhileSpinning;
@@ -198,6 +199,12 @@ public class CircleProgressView extends View {
         parseAttributes(context.obtainStyledAttributes(attrs,
                 R.styleable.CircleProgressView));
 
+        if (!isInEditMode()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
+        }
+
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mMaskPaint.setFilterBitmap(false);
         mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
@@ -210,90 +217,90 @@ public class CircleProgressView extends View {
      * @param a the attributes to parse
      */
     private void parseAttributes(TypedArray a) {
-        setBarWidth((int) a.getDimension(R.styleable.CircleProgressView_barWidth,
+        setBarWidth((int) a.getDimension(R.styleable.CircleProgressView_cpv_barWidth,
                 mBarWidth));
 
-        setRimWidth((int) a.getDimension(R.styleable.CircleProgressView_rimWidth,
+        setRimWidth((int) a.getDimension(R.styleable.CircleProgressView_cpv_rimWidth,
                 mRimWidth));
 
-        setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_spinSpeed,
+        setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_cpv_spinSpeed,
                 mSpinSpeed));
 
 
-        if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1) && a.hasValue(R.styleable.CircleProgressView_barColor2) && a.hasValue(R.styleable.CircleProgressView_barColor3)) {
-            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor2, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor3, mBarColorStandard)};
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_barColor) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor1) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor2) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor3)) {
+            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor2, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor3, mBarColorStandard)};
 
-        } else if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1) && a.hasValue(R.styleable.CircleProgressView_barColor2)) {
+        } else if (a.hasValue(R.styleable.CircleProgressView_cpv_barColor) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor1) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor2)) {
 
-            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor2, mBarColorStandard)};
+            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor1, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor2, mBarColorStandard)};
 
-        } else if (a.hasValue(R.styleable.CircleProgressView_barColor) && a.hasValue(R.styleable.CircleProgressView_barColor1)) {
+        } else if (a.hasValue(R.styleable.CircleProgressView_cpv_barColor) && a.hasValue(R.styleable.CircleProgressView_cpv_barColor1)) {
 
-            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor1, mBarColorStandard)};
+            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor1, mBarColorStandard)};
 
         } else {
-            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_barColor, mBarColorStandard)};
+            mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard)};
         }
 
-        setSpinBarColor(a.getColor(R.styleable.CircleProgressView_spinColor, mSpinnerColor));
+        setSpinBarColor(a.getColor(R.styleable.CircleProgressView_cpv_spinColor, mSpinnerColor));
 
 
-        setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_spinBarLength,
+        setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_cpv_spinBarLength,
                 mSpinningBarLengthOrig));
 
 
-        if (a.hasValue(R.styleable.CircleProgressView_textSize)) {
-            setTextSize((int) a.getDimension(R.styleable.CircleProgressView_textSize, mTextSize));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_textSize)) {
+            setTextSize((int) a.getDimension(R.styleable.CircleProgressView_cpv_textSize, mTextSize));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_unitSize)) {
-            setUnitSize((int) a.getDimension(R.styleable.CircleProgressView_unitSize, mUnitSize));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_unitSize)) {
+            setUnitSize((int) a.getDimension(R.styleable.CircleProgressView_cpv_unitSize, mUnitSize));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_textColor)) {
-            setTextColor(a.getColor(R.styleable.CircleProgressView_textColor, mTextColor));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_textColor)) {
+            setTextColor(a.getColor(R.styleable.CircleProgressView_cpv_textColor, mTextColor));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_unitColor)) {
-            setUnitColor(a.getColor(R.styleable.CircleProgressView_unitColor, mUnitColor));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_unitColor)) {
+            setUnitColor(a.getColor(R.styleable.CircleProgressView_cpv_unitColor, mUnitColor));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_autoTextColor)) {
-            setAutoTextColor(a.getBoolean(R.styleable.CircleProgressView_autoTextColor, mIsAutoColorEnabled));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_autoTextColor)) {
+            setAutoTextColor(a.getBoolean(R.styleable.CircleProgressView_cpv_autoTextColor, mIsAutoColorEnabled));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_autoTextSize)) {
-            setAutoTextSize(a.getBoolean(R.styleable.CircleProgressView_autoTextSize, mIsAutoTextSize));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_autoTextSize)) {
+            setAutoTextSize(a.getBoolean(R.styleable.CircleProgressView_cpv_autoTextSize, mIsAutoTextSize));
         }
-        if (a.hasValue(R.styleable.CircleProgressView_textMode)) {
-            setTextMode(TextMode.values()[a.getInt(R.styleable.CircleProgressView_textMode, 0)]);
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_textMode)) {
+            setTextMode(TextMode.values()[a.getInt(R.styleable.CircleProgressView_cpv_textMode, 0)]);
         }
         //if the mText is empty, show current percentage value
-        if (a.hasValue(R.styleable.CircleProgressView_text)) {
-            setText(a.getString(R.styleable.CircleProgressView_text));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_text)) {
+            setText(a.getString(R.styleable.CircleProgressView_cpv_text));
         }
 
-        setRimColor(a.getColor(R.styleable.CircleProgressView_rimColor,
+        setRimColor(a.getColor(R.styleable.CircleProgressView_cpv_rimColor,
                 mRimColor));
 
-        setFillCircleColor(a.getColor(R.styleable.CircleProgressView_fillColor,
+        setFillCircleColor(a.getColor(R.styleable.CircleProgressView_cpv_fillColor,
                 mBackgroundCircleColor));
 
-        setContourColor(a.getColor(R.styleable.CircleProgressView_contourColor, mContourColor));
-        setContourSize(a.getDimension(R.styleable.CircleProgressView_contourSize, mContourSize));
+        setContourColor(a.getColor(R.styleable.CircleProgressView_cpv_contourColor, mContourColor));
+        setContourSize(a.getDimension(R.styleable.CircleProgressView_cpv_contourSize, mContourSize));
 
-        setMaxValue(a.getFloat(R.styleable.CircleProgressView_maxValue, mMaxValue));
+        setMaxValue(a.getFloat(R.styleable.CircleProgressView_cpv_maxValue, mMaxValue));
 
-        setUnit(a.getString(R.styleable.CircleProgressView_unit));
-        setShowUnit(a.getBoolean(R.styleable.CircleProgressView_showUnit, mShowUnit));
+        setUnit(a.getString(R.styleable.CircleProgressView_cpv_unit));
+        setShowUnit(a.getBoolean(R.styleable.CircleProgressView_cpv_showUnit, mShowUnit));
 
-        setTextScale(a.getFloat(R.styleable.CircleProgressView_textScale, mTextScale));
-        setUnitScale(a.getFloat(R.styleable.CircleProgressView_unitScale, mUnitScale));
+        setTextScale(a.getFloat(R.styleable.CircleProgressView_cpv_textScale, mTextScale));
+        setUnitScale(a.getFloat(R.styleable.CircleProgressView_cpv_unitScale, mUnitScale));
 
-        setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_seekMode, mSeekModeEnabled));
+        setSeekModeEnabled(a.getBoolean(R.styleable.CircleProgressView_cpv_seekMode, mSeekModeEnabled));
 
-        setStartAngle(a.getInt(R.styleable.CircleProgressView_startAngle, mStartAngle));
+        setStartAngle(a.getInt(R.styleable.CircleProgressView_cpv_startAngle, mStartAngle));
 
-        setShowTextWhileSpinning(a.getBoolean(R.styleable.CircleProgressView_showTextInSpinningMode, mShowTextWhileSpinning));
+        setShowTextWhileSpinning(a.getBoolean(R.styleable.CircleProgressView_cpv_showTextInSpinningMode, mShowTextWhileSpinning));
 
-        if (a.hasValue(R.styleable.CircleProgressView_blockCount)) {
-            setBlockCount(a.getInt(R.styleable.CircleProgressView_blockCount, 1));
-            setBlockScale(a.getFloat(R.styleable.CircleProgressView_blockScale, 0.9f));
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_blockCount)) {
+            setBlockCount(a.getInt(R.styleable.CircleProgressView_cpv_blockCount, 1));
+            setBlockScale(a.getFloat(R.styleable.CircleProgressView_cpv_blockScale, 0.9f));
         }
 
         // Recycle
@@ -873,14 +880,14 @@ public class CircleProgressView extends View {
      * @return The number of ms to wait between each draw call.
      */
     public int getDelayMillis() {
-        return mDelayMillis;
+        return mFrameDelayMillis;
     }
 
     /**
      * @param delayMillis The number of ms to wait between each draw call.
      */
     public void setDelayMillis(int delayMillis) {
-        this.mDelayMillis = delayMillis;
+        this.mFrameDelayMillis = delayMillis;
     }
 
     /**
@@ -1118,6 +1125,7 @@ public class CircleProgressView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        Log.d(TAG, "onDraw");
 
         if (DEBUG) {
             drawDebug(canvas);
@@ -1264,7 +1272,6 @@ public class CircleProgressView extends View {
             // only re-calc position and size if string length changed
             if (mTextLength != text.length()) {
                 update = true;
-                mTextLength = text.length();
                 mTextPaint.setTextSize(mTextSize);
                 mActualTextBounds = mOuterTextBounds = getTextBounds(text, mTextPaint, mCircleBounds); //center text in circle
 

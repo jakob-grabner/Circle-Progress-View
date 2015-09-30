@@ -1125,8 +1125,6 @@ public class CircleProgressView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Log.d(TAG, "onDraw");
-
         if (DEBUG) {
             drawDebug(canvas);
         }

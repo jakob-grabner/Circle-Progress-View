@@ -1416,10 +1416,10 @@ public class CircleProgressView extends View {
     }
 
     private void triggerOnProgressChanged(float value) {
-        if (null == onProgressChangedListener || value == previousProgressChangedValue) return;
-
-        onProgressChangedListener.onProgressChanged(value);
-        previousProgressChangedValue = value;
+        if (onProgressChangedListener != null && value != previousProgressChangedValue){
+            onProgressChangedListener.onProgressChanged(value);
+            previousProgressChangedValue = value;
+        }
     }
 
     //endregion important getter / setter
@@ -1528,7 +1528,6 @@ public class CircleProgressView extends View {
     //region listener for progress change
 
     private OnProgressChangedListener onProgressChangedListener;
-    private float previousProgressChangedValue;
 
     public interface OnProgressChangedListener {
         void onProgressChanged(float value);

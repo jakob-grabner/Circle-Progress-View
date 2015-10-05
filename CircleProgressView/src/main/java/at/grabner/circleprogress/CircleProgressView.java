@@ -25,7 +25,6 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -1364,6 +1363,7 @@ public class CircleProgressView extends View {
         msg.what = AnimationMsg.SET_VALUE.ordinal();
         msg.obj = new float[]{_value, _value};
         mAnimationHandler.sendMessage(msg);
+        triggerOnProgressChanged(_value);
     }
 
     /**
@@ -1379,6 +1379,7 @@ public class CircleProgressView extends View {
         msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
         msg.obj = new float[]{_valueFrom, _valueTo};
         mAnimationHandler.sendMessage(msg);
+        triggerOnProgressChanged(_valueTo);
     }
 
     /**
@@ -1395,6 +1396,7 @@ public class CircleProgressView extends View {
         msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
         msg.obj = new float[]{mCurrentValue, _valueTo};
         mAnimationHandler.sendMessage(msg);
+        triggerOnProgressChanged(_valueTo);
     }
 
     /**
@@ -1410,6 +1412,14 @@ public class CircleProgressView extends View {
         msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
         msg.obj = new float[]{mCurrentValue, _valueTo};
         mAnimationHandler.sendMessage(msg);
+        triggerOnProgressChanged(_valueTo);
+    }
+
+    private void triggerOnProgressChanged(float value) {
+        if (onProgressChangedListener != null && value != previousProgressChangedValue){
+            onProgressChangedListener.onProgressChanged(value);
+            previousProgressChangedValue = value;
+        }
     }
 
     //endregion important getter / setter
@@ -1512,6 +1522,23 @@ public class CircleProgressView extends View {
 
     //endregion
     //----------------------------------
+
+
+    //-----------------------------------
+    //region listener for progress change
+
+    private OnProgressChangedListener onProgressChangedListener;
+
+    public interface OnProgressChangedListener {
+        void onProgressChanged(float value);
+    }
+
+    public void setOnProgressChangedListener(OnProgressChangedListener listener) {
+        onProgressChangedListener = listener;
+    }
+
+    //endregion listener for progress change
+    //--------------------------------------
 
 }
 

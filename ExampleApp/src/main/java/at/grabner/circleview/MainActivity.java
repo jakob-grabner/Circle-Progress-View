@@ -13,7 +13,7 @@ import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CircleProgressView.OnProgressChangedListener {
 
 
     CircleProgressView mCircleView;
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mCircleView = (CircleProgressView) findViewById(R.id.circleView);
+        mCircleView.setOnProgressChangedListener(this);
 
         //value setting
         mCircleView.setMaxValue(100);
@@ -180,6 +181,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         mCircleView.setValue(0);
         mCircleView.setValueAnimated(42);
+    }
+
+    @Override
+    public void onProgressChanged(float value) {
     }
 
 }

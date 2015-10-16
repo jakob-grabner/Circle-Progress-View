@@ -1528,6 +1528,7 @@ public class CircleProgressView extends View {
     //region listener for progress change
 
     private OnProgressChangedListener onProgressChangedListener;
+    private float previousProgressChangedValue;
 
     public interface OnProgressChangedListener {
         void onProgressChanged(float value);

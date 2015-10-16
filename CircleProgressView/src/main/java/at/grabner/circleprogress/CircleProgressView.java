@@ -70,7 +70,6 @@ public class CircleProgressView extends View {
 
     private int mLayoutHeight = 0;
     private int mLayoutWidth = 0;
-    private int mCircleRadius = 80;
     private int mBarWidth = 40;
     private int mRimWidth = 40;
     private int mStartAngle = 270;
@@ -83,11 +82,6 @@ public class CircleProgressView extends View {
     private float mTextScale = 1;
     private float mUnitScale = 1;
 
-    //Padding (with defaults)
-    private int mPaddingTop = 5;
-    private int mPaddingBottom = 5;
-    private int mPaddingLeft = 5;
-    private int mPaddingRight = 5;
     //Colors (with defaults)
     private int mBarColorStandard = 0xff009688; //stylish blue
     private int mContourColor = 0xAA000000;
@@ -307,10 +301,10 @@ public class CircleProgressView extends View {
     }
 
     /*
- * When this is called, make the view square.
- * From: http://www.jayway.com/2012/12/12/creating-custom-android-views-part-4-measuring-and-how-to-force-a-view-to-be-square/
- *
- */
+     * When this is called, make the view square.
+     * From: http://www.jayway.com/2012/12/12/creating-custom-android-views-part-4-measuring-and-how-to-force-a-view-to-be-square/
+     *
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // The first thing that happen is that we call the superclass
@@ -367,7 +361,6 @@ public class CircleProgressView extends View {
             scaleX = 0.77f; // scaleX square to rectangle, so the longer text with unit fits better
             scaleY = 1.33f;
         }
-
         return new RectF(_circleBounds.left + (widthDelta * scaleX), _circleBounds.top + (widthDelta * scaleY), _circleBounds.right - (widthDelta * scaleX), _circleBounds.bottom - (widthDelta * scaleY));
 
     }
@@ -596,41 +589,6 @@ public class CircleProgressView extends View {
         mIsAutoTextSize = _autoTextSize;
     }
 
-    public int getPaddingTop() {
-        return mPaddingTop;
-    }
-
-    public void setPaddingTop(int paddingTop) {
-        this.mPaddingTop = paddingTop;
-    }
-
-    public int getPaddingBottom() {
-        return mPaddingBottom;
-    }
-
-    public void setPaddingBottom(int paddingBottom) {
-        this.mPaddingBottom = paddingBottom;
-    }
-
-    public int getPaddingLeft() {
-        return mPaddingLeft;
-    }
-
-    public void setPaddingLeft(int paddingLeft) {
-        this.mPaddingLeft = paddingLeft;
-    }
-
-    public int getPaddingRight() {
-        return mPaddingRight;
-    }
-
-    public void setPaddingRight(int paddingRight) {
-        this.mPaddingRight = paddingRight;
-    }
-
-    public int getCircleRadius() {
-        return mCircleRadius;
-    }
 
     public boolean isShowUnit() {
         return mShowUnit;
@@ -1092,29 +1050,30 @@ public class CircleProgressView extends View {
         int yOffset = mLayoutHeight - minValue;
 
         // Add the offset
-        mPaddingTop = this.getPaddingTop() + (yOffset / 2);
-        mPaddingBottom = this.getPaddingBottom() + (yOffset / 2);
-        mPaddingLeft = this.getPaddingLeft() + (xOffset / 2);
-        mPaddingRight = this.getPaddingRight() + (xOffset / 2);
+        float paddingTop = this.getPaddingTop() + (yOffset / 2);
+        float paddingBottom = this.getPaddingBottom() + (yOffset / 2);
+        float paddingLeft = this.getPaddingLeft() + (xOffset / 2);
+        float paddingRight = this.getPaddingRight() + (xOffset / 2);
 
         int width = getWidth(); //this.getLayoutParams().width;
         int height = getHeight(); //this.getLayoutParams().height;
 
 
-        mCircleBounds = new RectF(mPaddingLeft + mBarWidth,
-                mPaddingTop + mBarWidth,
-                width - mPaddingRight - mBarWidth,
-                height - mPaddingBottom - mBarWidth);
-        mInnerCircleBound = new RectF(mPaddingLeft + (mBarWidth * 1.5f),
-                mPaddingTop + (mBarWidth * 1.5f),
-                width - mPaddingRight - (mBarWidth * 1.5f),
-                height - mPaddingBottom - (mBarWidth * 1.5f));
+        float circleWidthHalf = mBarWidth / 2f > mRimWidth / 2f + mContourSize ? mBarWidth / 2f : mRimWidth / 2f + mContourSize;
+
+        mCircleBounds = new RectF(paddingLeft + circleWidthHalf,
+                paddingTop + circleWidthHalf,
+                width - paddingRight - circleWidthHalf,
+                height - paddingBottom - circleWidthHalf);
+        mInnerCircleBound = new RectF(paddingLeft + (mBarWidth * 1.5f),
+                paddingTop + (mBarWidth * 1.5f),
+                width - paddingRight - (mBarWidth * 1.5f),
+                height - paddingBottom - (mBarWidth * 1.5f));
         mOuterTextBounds = getInnerCircleRect(mCircleBounds);
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
 
-        int fullRadius = (width - mPaddingRight - mBarWidth) / 2;
-        mCircleRadius = (fullRadius - mBarWidth) + 1;
+        int fullRadius = Math.round((width - paddingRight - mBarWidth) / 2f);
         mCenter = new PointF(mCircleBounds.centerX(), mCircleBounds.centerY());
     }
     //endregion Setting up stuff
@@ -1416,7 +1375,7 @@ public class CircleProgressView extends View {
     }
 
     private void triggerOnProgressChanged(float value) {
-        if (onProgressChangedListener != null && value != previousProgressChangedValue){
+        if (onProgressChangedListener != null && value != previousProgressChangedValue) {
             onProgressChangedListener.onProgressChanged(value);
             previousProgressChangedValue = value;
         }

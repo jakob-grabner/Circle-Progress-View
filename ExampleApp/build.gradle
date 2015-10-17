@@ -29,7 +29,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.1.0'
     compile project(':CircleProgressView')
-//    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.3'
+//    compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.4'
 }

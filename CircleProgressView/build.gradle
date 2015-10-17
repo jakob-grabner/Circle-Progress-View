@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:23.0.1'
+    compile 'com.android.support:support-annotations:23.1.0'
 }
 
 // build a jar with source files

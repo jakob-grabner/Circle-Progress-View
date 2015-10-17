@@ -1,11 +1,16 @@
 package at.grabner.circleview;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import at.grabner.circleprogress.AnimationState;
 import at.grabner.circleprogress.AnimationStateChangedListener;
@@ -48,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
         //if you want the calculated text sizes to be bigger/smaller you can do so via
         mCircleView.setUnitScale(0.9f);
         mCircleView.setTextScale(0.9f);
+
+//        //custom typeface
+//        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ANDROID_ROBOT.ttf");
+//        mCircleView.setTextTypeface(font);
+//        mCircleView.setUnitTextTypeface(font);
+
 
         //color
         //you can use a gradient

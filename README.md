@@ -50,9 +50,9 @@ Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-Vi
 	
 	dependencies {
 		// ...
-	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.4'
+	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.5'
 	}
 	
 ## JavaDoc
 
-Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.4/javadoc/).
+Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.5/javadoc/).

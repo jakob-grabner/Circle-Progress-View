@@ -15,6 +15,7 @@
         <attr name="cpv_autoTextSize" format="boolean"/>
 
         <!-- Progress Bar -->
+        <attr name="cpv_value" format="float"/>
         <attr name="cpv_maxValue" format="float"/>
         <attr name="cpv_barWidth" format="dimension"/>
         <attr name="cpv_barColor" format="color"/>

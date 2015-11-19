@@ -16,17 +16,19 @@
         android:id="@+id/circleView"
         android:layout_width="277dp"
         android:layout_height="277dp"
-        CircleProgressView:cpv_barColor="#00796B"
+        CircleProgressView:cpv_value="0"
+        CircleProgressView:cpv_barColor="@color/primary"
         CircleProgressView:cpv_barWidth="35dp"
         CircleProgressView:cpv_contourSize="0dp"
         CircleProgressView:cpv_autoTextSize="true"
         CircleProgressView:cpv_maxValue="100"
-        CircleProgressView:cpv_rimColor="#B2DFDB"
+        CircleProgressView:cpv_rimColor="@color/primary_light"
         CircleProgressView:cpv_rimWidth="35dp"
         CircleProgressView:cpv_seekMode="true"
-        CircleProgressView:cpv_textColor="#00796B"
+        CircleProgressView:cpv_textColor="@color/primary_dark"
         CircleProgressView:cpv_unit="%"
-        CircleProgressView:cpv_unitColor="#009688"/>
+        CircleProgressView:cpv_unitColor="@color/primary_light"
+        CircleProgressView:cpv_spinColor="@color/primary"/>
 
 
     <TextView

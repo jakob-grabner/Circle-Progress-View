@@ -1,7 +1,7 @@
 package at.grabner.circleview;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,24 +9,25 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import at.grabner.circleprogress.AnimationState;
 import at.grabner.circleprogress.AnimationStateChangedListener;
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
 
 
-public class MainActivity extends AppCompatActivity implements CircleProgressView.OnProgressChangedListener {
+public class MainActivity extends AppCompatActivity {
 
+    /**
+     * The log tag.
+     */
+    private final static String TAG = "MainActivity";
 
     CircleProgressView mCircleView;
     Switch mSwitchSpin;
     Switch mSwitchShowUnit;
     SeekBar mSeekBar;
     SeekBar mSeekBarSpinnerLength;
-    Boolean mShowUnit = true;
+    Boolean mShowUnit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +36,17 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
         setContentView(R.layout.activity_main);
 
         mCircleView = (CircleProgressView) findViewById(R.id.circleView);
-        mCircleView.setOnProgressChangedListener(this);
+        mCircleView.setOnProgressChangedListener(new CircleProgressView.OnProgressChangedListener() {
+            @Override
+            public void onProgressChanged(float value) {
+                Log.d(TAG, "Progress Changed: " + value);
+            }
+        });
 
         //value setting
-        mCircleView.setMaxValue(100);
-        mCircleView.setValue(0);
-        mCircleView.setValueAnimated(24);
+//        mCircleView.setMaxValue(100);
+//        mCircleView.setValue(0);
+//        mCircleView.setValueAnimated(24);
 
         //show unit
         mCircleView.setUnit("%");
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
 
         //color
         //you can use a gradient
-        mCircleView.setBarColor(getResources().getColor(R.color.primary_color), getResources().getColor(R.color.secondary_color));
+        mCircleView.setBarColor(getResources().getColor(R.color.primary), getResources().getColor(R.color.accent));
 
         //colors of text and unit can be set via
         mCircleView.setTextColor(Color.RED);
@@ -79,15 +85,16 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
         mCircleView.setTextMode(TextMode.PERCENT); // Shows current percent of the current value from the max value
 
         //spinning
-        mCircleView.spin(); // start spinning
-        mCircleView.stopSpinning(); // stops spinning. Spinner gets shorter until it disappears.
-        mCircleView.setValueAnimated(24); // stops spinning. Spinner spins until on top. Then fills to set value.
-        mCircleView.setShowTextWhileSpinning(true); // Show/hide text in spinning mode
+//        mCircleView.spin(); // start spinning
+//        mCircleView.stopSpinning(); // stops spinning. Spinner gets shorter until it disappears.
+//        mCircleView.setValueAnimated(24); // stops spinning. Spinner spins until on top. Then fills to set value.
+
+
         //animation callbacks
 
         //this example shows how to show a loading text if it is in spinning mode, and the current percent value otherwise.
+        mCircleView.setShowTextWhileSpinning(true); // Show/hide text in spinning mode
         mCircleView.setText("Loading...");
-        mCircleView.setTextMode(TextMode.PERCENT);
         mCircleView.setAnimationStateChangedListener(
                 new AnimationStateChangedListener() {
                     @Override
@@ -113,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
         );
 
 
+        // region setup other ui elements
         //Setup Switch
         mSwitchSpin = (Switch) findViewById(R.id.switch1);
         mSwitchSpin.setOnCheckedChangeListener(
@@ -182,7 +190,9 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
                         mCircleView.setSpinningBarLength(seekBar.getProgress());
                     }
                 });
+        //endregion
 
+        new LongOperation().execute();
 
     }
 
@@ -190,13 +200,36 @@ public class MainActivity extends AppCompatActivity implements CircleProgressVie
     @Override
     protected void onStart() {
         super.onStart();
-        mCircleView.setValue(0);
-        mCircleView.setValueAnimated(42);
     }
 
-    @Override
-    public void onProgressChanged(float value) {
-    }
+    private class LongOperation extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
 
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mCircleView.setValue(0);
+                    mCircleView.spin();
+                }
+            });
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            mCircleView.setValueAnimated(42);
+        }
+    }
 }
+
+
 

@@ -3,17 +3,17 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
     <!-- Main theme colors -->
-    <item name="colorPrimary">@color/primary_color</item>
+    <item name="colorPrimary">@color/primary</item>
     <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-    <item name="colorPrimaryDark">@color/primary_dark_color</item>
+    <item name="colorPrimaryDark">@color/primary_dark</item>
     <!--   theme UI controls like checkboxes and text fields -->
-    <item name="colorAccent">@color/secondary_color</item>
+    <item name="colorAccent">@color/accent</item>
     <!--   your app's branding color (for the app bar) -->
-    <item name="android:colorPrimary">@color/primary_color</item>
+    <item name="android:colorPrimary">@color/primary</item>
     <!--   darker variant of colorPrimary (for status bar, contextual app bars) -->
-    <item name="android:colorPrimaryDark">@color/primary_dark_color</item>
+    <item name="android:colorPrimaryDark">@color/primary_dark</item>
     <!--   theme UI controls like checkboxes and text fields -->
-    <item name="android:colorAccent">@color/secondary_color</item>
+    <item name="android:colorAccent">@color/accent</item>
     <!--<item name="android:navigationBarColor">@color/primary_dark_color</item>-->
 </style>
 </resources>

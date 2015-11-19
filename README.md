@@ -1,9 +1,9 @@
 # CircleView
-A animated circle view, similar to Android's ProgressBar. Can be used in 'value mode' or 'spinning mode'. 
+A animated circle view. Can be used in 'value mode' or 'spinning mode'. Nice transitions between spinning and value. Can be used as loading indicator and to show progress or values in a circular manner. In seek mode, it can also be used set a value.
 
-![MainImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleProgressView.png)
+![MainImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/big.png)
 
-![BlockImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleProgressViewBlock.png)
+
 
 ## Fully animated:
 ![animation demo](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/demo.gif)
@@ -18,15 +18,22 @@ A animated circle view, similar to Android's ProgressBar. Can be used in 'value 
 
 All parts come with a customizeable color and thickness. Set the size of a part to 0 to hide it. 
 
-# Text sizes
+## Text sizes
 Per default the texts size is automatically calculated to fit in the circle. 
 
-# Colors
+## Colors
 The spin bar color can consist of a single color or a gradient from up to 4 colors.
 
 ![Gradient colors.](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/ColorGradient.jpg)
 
-# Seek Mode
+## Block Mode
+- Via XML
+```
+        CircleProgressView:cpv_blockCount="18"
+        CircleProgressView:cpv_blockScale="0.9"
+```
+
+## Seek Mode
 Set value on touch input. Enbale it:
 - Via Code:
 ```
@@ -34,8 +41,13 @@ Set value on touch input. Enbale it:
 ```
 - Via XML:
 ```
-	CircleProgressView:seekMode="true"
+	CircleProgressView:cpv_seekMode="true"
 ```
+
+
+For more example take a look the example app.
+
+
 ## Add it to you project:
 
 Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View 
@@ -50,9 +62,9 @@ Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-Vi
 	
 	dependencies {
 		// ...
-	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.5'
+	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.6'
 	}
 	
 ## JavaDoc
 
-Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.5/javadoc/).
+Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.6/javadoc/).

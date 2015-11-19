@@ -1,4 +1,4 @@
-package at.grabner.circleview;
+package at.grabner.example.circleprogressview;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -13,6 +13,7 @@ import at.grabner.circleprogress.AnimationState;
 import at.grabner.circleprogress.AnimationStateChangedListener;
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
+
 
 
 public class MainActivity extends AppCompatActivity {

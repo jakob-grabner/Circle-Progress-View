@@ -8,7 +8,7 @@ android {
         maven { url "https://jitpack.io" }
     }
     defaultConfig {
-        applicationId "at.grabner.circleview"
+        applicationId "at.grabner.example.circleprogressview"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 2

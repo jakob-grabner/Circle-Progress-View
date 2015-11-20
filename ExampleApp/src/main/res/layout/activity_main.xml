@@ -16,19 +16,25 @@
         android:id="@+id/circleView"
         android:layout_width="277dp"
         android:layout_height="277dp"
-        CircleProgressView:cpv_value="0"
+        CircleProgressView:cpv_value="10"
         CircleProgressView:cpv_barColor="@color/primary"
         CircleProgressView:cpv_barWidth="35dp"
         CircleProgressView:cpv_contourSize="0dp"
-        CircleProgressView:cpv_autoTextSize="true"
+        CircleProgressView:cpv_autoTextSize="false"
         CircleProgressView:cpv_maxValue="100"
         CircleProgressView:cpv_rimColor="@color/primary_light"
         CircleProgressView:cpv_rimWidth="35dp"
         CircleProgressView:cpv_seekMode="true"
         CircleProgressView:cpv_textColor="@color/primary_dark"
-        CircleProgressView:cpv_unit="%"
+        CircleProgressView:cpv_unit="km/h"
         CircleProgressView:cpv_unitColor="@color/primary_light"
-        CircleProgressView:cpv_spinColor="@color/primary"/>
+        CircleProgressView:cpv_spinColor="@color/primary"
+        CircleProgressView:cpv_unitPosition="right_top"
+        CircleProgressView:cpv_unitScale="1"
+        CircleProgressView:cpv_textScale="1"
+        CircleProgressView:cpv_textSize="80sp"
+        CircleProgressView:cpv_unitSize="30sp"
+        CircleProgressView:cpv_showUnit="true"/>
 
 
     <TextView
@@ -81,6 +87,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Show Unit"/>
+
+
     </LinearLayout>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

@@ -1,19 +1,25 @@
 package at.grabner.example.circleprogressview;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import at.grabner.circleprogress.AnimationState;
 import at.grabner.circleprogress.AnimationStateChangedListener;
 import at.grabner.circleprogress.CircleProgressView;
 import at.grabner.circleprogress.TextMode;
-
+import at.grabner.circleprogress.UnitPosition;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
     Switch mSwitchShowUnit;
     SeekBar mSeekBar;
     SeekBar mSeekBarSpinnerLength;
-    Boolean mShowUnit = false;
+    Boolean mShowUnit = true;
+    Spinner mSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,41 +56,41 @@ public class MainActivity extends AppCompatActivity {
 //        mCircleView.setValue(0);
 //        mCircleView.setValueAnimated(24);
 
-        //show unit
-        mCircleView.setUnit("%");
-        mCircleView.setShowUnit(mShowUnit);
-
-        //text sizes
-        mCircleView.setTextSize(50); // text size set, auto text size off
-        mCircleView.setUnitSize(40); // if i set the text size i also have to set the unit size
-        mCircleView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
-        //if you want the calculated text sizes to be bigger/smaller you can do so via
-        mCircleView.setUnitScale(0.9f);
-        mCircleView.setTextScale(0.9f);
-
-//        //custom typeface
-//        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ANDROID_ROBOT.ttf");
-//        mCircleView.setTextTypeface(font);
-//        mCircleView.setUnitTextTypeface(font);
-
-
-        //color
-        //you can use a gradient
-        mCircleView.setBarColor(getResources().getColor(R.color.primary), getResources().getColor(R.color.accent));
-
-        //colors of text and unit can be set via
-        mCircleView.setTextColor(Color.RED);
-        mCircleView.setTextColor(Color.BLUE);
-        //or to use the same color as in the gradient
-        mCircleView.setAutoTextColor(true); //previous set values are ignored
-
-        //text mode
-        mCircleView.setText("Text"); //shows the given text in the circle view
-        mCircleView.setTextMode(TextMode.TEXT); // Set text mode to text to show text
-
-        //in the following text modes, the text is ignored
-        mCircleView.setTextMode(TextMode.VALUE); // Shows the current value
-        mCircleView.setTextMode(TextMode.PERCENT); // Shows current percent of the current value from the max value
+//        //show unit
+//        mCircleView.setUnit("%");
+//        mCircleView.setShowUnit(mShowUnit);
+//
+//        //text sizes
+//        mCircleView.setTextSize(50); // text size set, auto text size off
+//        mCircleView.setUnitSize(40); // if i set the text size i also have to set the unit size
+//        mCircleView.setAutoTextSize(true); // enable auto text size, previous values are overwritten
+//        //if you want the calculated text sizes to be bigger/smaller you can do so via
+//        mCircleView.setUnitScale(0.9f);
+//        mCircleView.setTextScale(0.9f);
+//
+////        //custom typeface
+////        Typeface font = Typeface.createFromAsset(getAssets(), "fonts/ANDROID_ROBOT.ttf");
+////        mCircleView.setTextTypeface(font);
+////        mCircleView.setUnitTextTypeface(font);
+//
+//
+//        //color
+//        //you can use a gradient
+//        mCircleView.setBarColor(getResources().getColor(R.color.primary), getResources().getColor(R.color.accent));
+//
+//        //colors of text and unit can be set via
+//        mCircleView.setTextColor(Color.RED);
+//        mCircleView.setTextColor(Color.BLUE);
+//        //or to use the same color as in the gradient
+//        mCircleView.setAutoTextColor(true); //previous set values are ignored
+//
+//        //text mode
+//        mCircleView.setText("Text"); //shows the given text in the circle view
+//        mCircleView.setTextMode(TextMode.TEXT); // Set text mode to text to show text
+//
+//        //in the following text modes, the text is ignored
+//        mCircleView.setTextMode(TextMode.VALUE); // Shows the current value
+//        mCircleView.setTextMode(TextMode.PERCENT); // Shows current percent of the current value from the max value
 
         //spinning
 //        mCircleView.spin(); // start spinning
@@ -139,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         mSwitchShowUnit = (Switch) findViewById(R.id.switch2);
+        mSwitchShowUnit.setChecked(mShowUnit);
         mSwitchShowUnit.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -191,9 +199,52 @@ public class MainActivity extends AppCompatActivity {
                         mCircleView.setSpinningBarLength(seekBar.getProgress());
                     }
                 });
+
+        mSpinner = (Spinner) findViewById(R.id.spinner);
+        List<String> list = new ArrayList<String>();
+        list.add("Left Top");
+        list.add("Left Bottom");
+        list.add("Right Top");
+        list.add("Right Bottom");
+        list.add("Top");
+        list.add("Bottom");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        mSpinner.setAdapter(dataAdapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0:
+                        mCircleView.setUnitPosition(UnitPosition.LEFT_TOP);
+                        break;
+                    case 1:
+                        mCircleView.setUnitPosition(UnitPosition.LEFT_BOTTOM);
+                        break;
+                    case 2:
+                        mCircleView.setUnitPosition(UnitPosition.RIGHT_TOP);
+                        break;
+                    case 3:
+                        mCircleView.setUnitPosition(UnitPosition.RIGHT_BOTTOM);
+                        break;
+                    case 4:
+                        mCircleView.setUnitPosition(UnitPosition.TOP);
+                        break;
+                    case 5:
+                        mCircleView.setUnitPosition(UnitPosition.BOTTOM);
+                        break;
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         //endregion
 
-        new LongOperation().execute();
+//        new LongOperation().execute();
 
     }
 

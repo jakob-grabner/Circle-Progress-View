@@ -32,7 +32,8 @@
         CircleProgressView:cpv_unitPosition="right_top"
         CircleProgressView:cpv_unitScale="1"
         CircleProgressView:cpv_textScale="1"
-        CircleProgressView:cpv_showUnit="true"/>
+        CircleProgressView:cpv_showUnit="true"
+        />
 
 
     <ScrollView

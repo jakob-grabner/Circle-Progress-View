@@ -164,6 +164,10 @@ public class CircleProgressView extends View {
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
     private float previousProgressChangedValue;
+
+    // Text typeface
+    private Typeface textTypeface;
+    private Typeface unitTextTypeface;
     //endregion members
     //----------------------------------
 
@@ -840,6 +844,22 @@ public class CircleProgressView extends View {
             setBlockScale(a.getFloat(R.styleable.CircleProgressView_cpv_blockScale, 0.9f));
         }
 
+
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_textTypeface)) {
+            try {
+                textTypeface = Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CircleProgressView_cpv_textTypeface));
+            } catch (Exception exception) {
+                // error while trying to inflate typeface (is the path set correctly?)
+            }
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_unitTypeface)) {
+            try {
+                unitTextTypeface = Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CircleProgressView_cpv_unitTypeface));
+            } catch (Exception exception) {
+                // error while trying to inflate typeface (is the path set correctly?)
+            }
+        }
+
         // Recycle
         a.recycle();
     }
@@ -1304,6 +1324,9 @@ public class CircleProgressView extends View {
     private void setupUnitTextPaint() {
         mUnitTextPaint.setStyle(Style.FILL);
         mUnitTextPaint.setAntiAlias(true);
+        if (unitTextTypeface != null) {
+            mUnitTextPaint.setTypeface(unitTextTypeface);
+        }
     }
 
     private void setupTextPaint() {
@@ -1314,6 +1337,11 @@ public class CircleProgressView extends View {
         mTextPaint.setStyle(Style.FILL);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
+        if (textTypeface != null) {
+            mTextPaint.setTypeface(textTypeface);
+        } else {
+            mTextPaint.setTypeface(Typeface.MONOSPACE);
+        }
 
     }
 

@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        //show unit
 //        mCircleView.setUnit("%");
-//        mCircleView.setShowUnit(mShowUnit);
+//        mCircleView.setUnitVisible(mShowUnit);
 //
 //        //text sizes
 //        mCircleView.setTextSize(50); // text size set, auto text size off
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 //        mCircleView.setTextColor(Color.RED);
 //        mCircleView.setTextColor(Color.BLUE);
 //        //or to use the same color as in the gradient
-//        mCircleView.setAutoTextColor(true); //previous set values are ignored
+//        mCircleView.setTextColorAuto(true); //previous set values are ignored
 //
 //        //text mode
 //        mCircleView.setText("Text"); //shows the given text in the circle view
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         //this example shows how to show a loading text if it is in spinning mode, and the current percent value otherwise.
         mCircleView.setShowTextWhileSpinning(true); // Show/hide text in spinning mode
         mCircleView.setText("Loading...");
-        mCircleView.setAnimationStateChangedListener(
+        mCircleView.setOnAnimationStateChangedListener(
                 new AnimationStateChangedListener() {
                     @Override
                     public void onAnimationStateChanged(AnimationState _animationState) {
@@ -112,11 +112,11 @@ public class MainActivity extends AppCompatActivity {
                             case ANIMATING:
                             case START_ANIMATING_AFTER_SPINNING:
                                 mCircleView.setTextMode(TextMode.PERCENT); // show percent if not spinning
-                                mCircleView.setShowUnit(mShowUnit);
+                                mCircleView.setUnitVisible(mShowUnit);
                                 break;
                             case SPINNING:
                                 mCircleView.setTextMode(TextMode.TEXT); // show text while spinning
-                                mCircleView.setShowUnit(false);
+                                mCircleView.setUnitVisible(false);
                             case END_SPINNING:
                                 break;
                             case END_SPINNING_START_ANIMATING:
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        mCircleView.setShowUnit(isChecked);
+                        mCircleView.setUnitVisible(isChecked);
                         mShowUnit = isChecked;
                     }
                 }
@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        mSpinner.setSelection(2);
         //endregion
 
 //        new LongOperation().execute();

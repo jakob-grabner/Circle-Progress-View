@@ -8,6 +8,8 @@
         <attr name="cpv_unitColor" format="color"/>
         <attr name="cpv_showUnit" format="boolean"/>
         <attr name="cpv_autoTextColor" format="boolean"/>
+        <attr name="cpv_typeface" format="string"/>
+        <attr name="cpv_unitTypeface" format="string"/>
 
         <!-- Text sizes-->
         <attr name="cpv_textSize" format="dimension"/>

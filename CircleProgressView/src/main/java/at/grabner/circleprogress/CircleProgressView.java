@@ -139,6 +139,9 @@ public class CircleProgressView extends View {
     private int mTextLength;
     private String mUnit = "";
     private UnitPosition mUnitPosition = UnitPosition.RIGHT_TOP;
+    // Text typeface
+    private Typeface textTypeface;
+    private Typeface unitTextTypeface;
     /**
      * Indicates if the given text, the current percentage, or the current value should be shown.
      */
@@ -331,6 +334,24 @@ public class CircleProgressView extends View {
         //if the mText is empty, show current percentage value
         if (a.hasValue(R.styleable.CircleProgressView_cpv_text)) {
             setText(a.getString(R.styleable.CircleProgressView_cpv_text));
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_typeface)) {
+            try
+            {
+                textTypeface = Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CircleProgressView_cpv_typeface));
+            }
+            catch (Exception exception) {
+                // error while trying to inflate typeface (is the path set correctly?)
+            }
+        }
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_unitTypeface)) {
+            try
+            {
+                unitTextTypeface = Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CircleProgressView_cpv_unitTypeface));
+            }
+            catch (Exception exception) {
+                // error while trying to inflate typeface (is the path set correctly?)
+            }
         }
 
         setUnitToTextScale(a.getFloat(R.styleable.CircleProgressView_cpv_unitToTextScale, 1f));
@@ -1045,16 +1066,24 @@ public class CircleProgressView extends View {
     private void setupUnitTextPaint() {
         mUnitTextPaint.setStyle(Style.FILL);
         mUnitTextPaint.setAntiAlias(true);
+        if (unitTextTypeface != null) {
+            mUnitTextPaint.setTypeface(unitTextTypeface);
+        }
     }
 
     private void setupTextPaint() {
         mTextPaint.setSubpixelText(true);
         mTextPaint.setLinearText(true);
-        mTextPaint.setTypeface(Typeface.MONOSPACE);
         mTextPaint.setColor(mTextColor);
         mTextPaint.setStyle(Style.FILL);
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(mTextSize);
+        if (textTypeface != null) {
+            mTextPaint.setTypeface(textTypeface);
+        }
+        else {
+            mTextPaint.setTypeface(Typeface.MONOSPACE);
+        }
 
     }
     //endregion Setting up stuff

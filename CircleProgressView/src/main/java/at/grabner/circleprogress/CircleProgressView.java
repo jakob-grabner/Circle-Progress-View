@@ -96,7 +96,7 @@ public class CircleProgressView extends View {
     private float mTextScale = 1;
     private float mUnitScale = 1;
     //Colors (with defaults)
-    private int mBarColorStandard = 0xff009688; //stylish blue
+    private final int mBarColorStandard = 0xff009688; //stylish blue
     private int mContourColor = 0xAA000000;
     private int mSpinnerColor = mBarColorStandard; //stylish blue
     private int mBackgroundCircleColor = 0x00000000;  //transparent
@@ -528,7 +528,7 @@ public class CircleProgressView extends View {
             matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
             mBarPaint.getShader().setLocalMatrix(matrix);
             mBarPaint.setColor(barColors[0]);
-        } else if (mBarColors.length == 0) {
+        } else if (mBarColors.length == 1) {
             mBarPaint.setColor(mBarColors[0]);
             mBarPaint.setShader(null);
         } else {

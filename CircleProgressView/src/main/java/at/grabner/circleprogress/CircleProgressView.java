@@ -717,6 +717,52 @@ public class CircleProgressView extends View {
 
     }
 
+
+
+    // region protected getters
+    public RectF getCircleInnerContour() {
+        return mCircleInnerContour;
+    }
+
+    public RectF getCircleOuterContour() {
+        return mCircleOuterContour;
+    }
+
+    public PointF getCenter() {
+        return mCenter;
+    }
+
+    public RectF getCircleBounds() {
+        return mCircleBounds;
+    }
+
+    public RectF getInnerCircleBound() {
+        return mInnerCircleBound;
+    }
+
+    public int getLayoutHeight() {
+        return mLayoutHeight;
+    }
+
+    public int getLayoutWidth() {
+        return mLayoutWidth;
+    }
+
+    public RectF getUnitBounds() {
+        return mUnitBounds;
+    }
+
+    public RectF getActualTextBounds() {
+        return mActualTextBounds;
+    }
+
+    public RectF getOuterTextBounds() {
+        return mOuterTextBounds;
+    }
+    //endregion
+
+
+
     //endregion getter/setter
     //----------------------------------
 
@@ -1273,7 +1319,6 @@ public class CircleProgressView extends View {
         mCircleInnerContour = new RectF(mCircleBounds.left + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.top + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.right - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.bottom - (mRimWidth / 2.0f) - (mContourSize / 2.0f));
         mCircleOuterContour = new RectF(mCircleBounds.left - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.top - (mRimWidth / 2.0f) - (mContourSize / 2.0f), mCircleBounds.right + (mRimWidth / 2.0f) + (mContourSize / 2.0f), mCircleBounds.bottom + (mRimWidth / 2.0f) + (mContourSize / 2.0f));
 
-        int fullRadius = Math.round((width - paddingRight - mBarWidth) / 2f);
         mCenter = new PointF(mCircleBounds.centerX(), mCircleBounds.centerY());
     }
 

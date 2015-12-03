@@ -83,8 +83,8 @@ public class CircleProgressView extends View {
     //The current state of the animation state machine.
     AnimationState mAnimationState = AnimationState.IDLE;
     AnimationStateChangedListener mAnimationStateChangedListener;
-    private int mLayoutHeight = 0;
-    private int mLayoutWidth = 0;
+    protected int mLayoutHeight = 0;
+    protected int mLayoutWidth = 0;
     private int mBarWidth = 40;
     private int mRimWidth = 40;
     private int mStartAngle = 270;
@@ -119,20 +119,20 @@ public class CircleProgressView extends View {
     private Paint mUnitTextPaint = new Paint();
     private Paint mContourPaint = new Paint();
     //Rectangles
-    private RectF mCircleBounds = new RectF();
-    private RectF mInnerCircleBound = new RectF();
-    private PointF mCenter;
+    protected RectF mCircleBounds = new RectF();
+    protected RectF mInnerCircleBound = new RectF();
+    protected PointF mCenter;
     /**
      * Maximum size of the text.
      */
-    private RectF mOuterTextBounds = new RectF();
+    protected RectF mOuterTextBounds = new RectF();
     /**
      * Actual size of the text.
      */
-    private RectF mActualTextBounds = new RectF();
-    private RectF mUnitBounds = new RectF();
-    private RectF mCircleOuterContour = new RectF();
-    private RectF mCircleInnerContour = new RectF();
+    protected RectF mActualTextBounds = new RectF();
+    protected RectF mUnitBounds = new RectF();
+    protected RectF mCircleOuterContour = new RectF();
+    protected RectF mCircleInnerContour = new RectF();
     //Other
     // The text to show
     private String mText = "";
@@ -716,52 +716,6 @@ public class CircleProgressView extends View {
         triggerOnProgressChanged(_valueTo);
 
     }
-
-
-
-    // region protected getters
-    public RectF getCircleInnerContour() {
-        return mCircleInnerContour;
-    }
-
-    public RectF getCircleOuterContour() {
-        return mCircleOuterContour;
-    }
-
-    public PointF getCenter() {
-        return mCenter;
-    }
-
-    public RectF getCircleBounds() {
-        return mCircleBounds;
-    }
-
-    public RectF getInnerCircleBound() {
-        return mInnerCircleBound;
-    }
-
-    public int getLayoutHeight() {
-        return mLayoutHeight;
-    }
-
-    public int getLayoutWidth() {
-        return mLayoutWidth;
-    }
-
-    public RectF getUnitBounds() {
-        return mUnitBounds;
-    }
-
-    public RectF getActualTextBounds() {
-        return mActualTextBounds;
-    }
-
-    public RectF getOuterTextBounds() {
-        return mOuterTextBounds;
-    }
-    //endregion
-
-
 
     //endregion getter/setter
     //----------------------------------

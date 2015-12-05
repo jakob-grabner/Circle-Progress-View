@@ -25,8 +25,11 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.text.DecimalFormat;
 
 /**
  * An circle view, similar to Android's ProgressBar.
@@ -164,6 +167,9 @@ public class CircleProgressView extends View {
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
     private float previousProgressChangedValue;
+
+
+    private DecimalFormat decimalFormat = new DecimalFormat("0");
 
     // Text typeface
     private Typeface textTypeface;
@@ -714,7 +720,17 @@ public class CircleProgressView extends View {
         msg.obj = new float[]{_valueFrom, _valueTo};
         mAnimationHandler.sendMessage(msg);
         triggerOnProgressChanged(_valueTo);
+    }
 
+    public DecimalFormat getDecimalFormat() {
+        return decimalFormat;
+    }
+
+    public void setDecimalFormat(DecimalFormat decimalFormat) {
+        if (decimalFormat == null) {
+            throw new IllegalArgumentException("decimalFormat must not be null!");
+        }
+        this.decimalFormat = decimalFormat;
     }
 
     //endregion getter/setter
@@ -859,6 +875,20 @@ public class CircleProgressView extends View {
                 // error while trying to inflate typeface (is the path set correctly?)
             }
         }
+
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_decimalFormat)) {
+            try {
+                String pattern = a.getString(R.styleable.CircleProgressView_cpv_decimalFormat);
+                if (pattern != null) {
+                    decimalFormat = new DecimalFormat(pattern);
+                }
+
+            } catch (Exception exception) {
+                Log.w(TAG, exception.getMessage());
+            }
+        }
+
+
 
         // Recycle
         a.recycle();
@@ -1504,11 +1534,10 @@ public class CircleProgressView extends View {
                 text = mText != null ? mText : "";
                 break;
             case PERCENT:
-                int percent = Math.round(100f / mMaxValue * mCurrentValue);
-                text = String.valueOf(percent);
+                text = decimalFormat.format(100f / mMaxValue * mCurrentValue);
                 break;
             case VALUE:
-                text = String.valueOf(Math.round(mCurrentValue));
+                text = decimalFormat.format(mCurrentValue);
                 break;
         }
 

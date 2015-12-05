@@ -10,6 +10,7 @@
         <attr name="cpv_autoTextColor" format="boolean"/>
         <attr name="cpv_textTypeface" format="string"/>
         <attr name="cpv_unitTypeface" format="string"/>
+        <attr name="cpv_decimalFormat" format="string"/>
 
         <!-- Text sizes-->
         <attr name="cpv_textSize" format="dimension"/>

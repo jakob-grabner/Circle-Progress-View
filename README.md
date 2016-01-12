@@ -1,5 +1,5 @@
 # CircleView
-A animated circle view. Can be used in 'value mode' or 'spinning mode'. Nice transitions between spinning and value. Can be used as loading indicator and to show progress or values in a circular manner. In seek mode, it can also be used to set a value.
+A animated circle view. Can be used in 'value mode' or 'spinning mode'. Nice transitions between spinning and value. Can be used as a loading indicator and to show progress or values in a circular manner. In seek mode, it can also be used to set a value.
 
 ![MainImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/big.png)
 
@@ -16,10 +16,10 @@ Try it out [here](https://play.google.com/store/apps/details?id=at.grabner.examp
 
 ![CircleParts](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/CircleParts.PNG)
 
-All parts come with a customizeable color and thickness. Set the size of a part to 0 to hide it. 
+All parts come with a customizable color and thickness. Set the size of a part to 0 to hide it. 
 
 ## Text sizes
-Per default the texts size is automatically calculated to fit in the circle. 
+Per default, the texts size is automatically calculated to fit in the circle. 
 
 ## Colors
 The spin bar color can consist of a single color or a gradient from up to 4 colors.
@@ -34,7 +34,7 @@ The spin bar color can consist of a single color or a gradient from up to 4 colo
 ```
 
 ## Seek Mode
-Set value on touch input. Enbale it:
+Set value on touch input. Enable it:
 - Via Code:
 ```
 	circleview.setSeekModeEnabled(true);
@@ -45,10 +45,10 @@ Set value on touch input. Enbale it:
 ```
 
 
-For more example take a look the example app.
+For more examples take a look at the example app.
 
 
-## Add it to you project:
+## Add it to your project:
 
 Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View 
 

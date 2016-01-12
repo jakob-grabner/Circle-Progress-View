@@ -34,7 +34,7 @@ The spin bar color can consist of a single color or a gradient from up to 4 colo
 ```
 
 ## Seek Mode
-Set value on touch input. Enbale it:
+Set value on touch input. Enable it:
 - Via Code:
 ```
 	circleview.setSeekModeEnabled(true);

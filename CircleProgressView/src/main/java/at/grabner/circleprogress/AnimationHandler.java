@@ -27,6 +27,26 @@ public class AnimationHandler extends Handler {
         mCircleViewWeakReference = new WeakReference<CircleProgressView>(circleView);
     }
 
+
+    /**
+     * Sets interpolator for value animations.
+     *
+     * @param mInterpolator the m interpolator
+     */
+    public void setValueInterpolator(TimeInterpolator mInterpolator) {
+        this.mInterpolator = mInterpolator;
+    }
+
+
+    /**
+     * Sets the interpolator for length changes of the bar.
+     *
+     * @param mLengthChangeInterpolator the m length change interpolator
+     */
+    public void setLengthChangeInterpolator(TimeInterpolator mLengthChangeInterpolator) {
+        this.mLengthChangeInterpolator = mLengthChangeInterpolator;
+    }
+
     @Override
     public void handleMessage(Message msg) {
         CircleProgressView circleView = mCircleViewWeakReference.get();

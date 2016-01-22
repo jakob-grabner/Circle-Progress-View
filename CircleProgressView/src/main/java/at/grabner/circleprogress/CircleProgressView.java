@@ -1,5 +1,6 @@
 package at.grabner.circleprogress;
 
+import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -82,7 +83,7 @@ public class CircleProgressView extends View {
     // helper for AnimationState.END_SPINNING_START_ANIMATING
     boolean mDrawBarWhileSpinning;
     //The animation handler containing the animation state machine.
-    Handler mAnimationHandler = new AnimationHandler(this);
+    AnimationHandler mAnimationHandler = new AnimationHandler(this);
     //The current state of the animation state machine.
     AnimationState mAnimationState = AnimationState.IDLE;
     AnimationStateChangedListener mAnimationStateChangedListener;
@@ -227,7 +228,7 @@ public class CircleProgressView extends View {
         return mBlockScale;
     }
 
-    public void setBlockScale(float blockScale) {
+    public void setBlockScale(@FloatRange(from = 0.0, to=1)float blockScale) {
         if (blockScale >= 0.0f && blockScale <= 1.0f) {
             mBlockScale = blockScale;
             mBlockScaleDegree = mBlockDegree * blockScale;
@@ -524,8 +525,8 @@ public class CircleProgressView extends View {
      */
     public void setBarColor(@ColorInt int... barColors) {
         this.mBarColors = barColors;
-        if (mBarColors.length > 1) {
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
+        if (barColors.length > 1) {
+            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), barColors, null));
             Matrix matrix = new Matrix();
             mBarPaint.getShader().getLocalMatrix(matrix);
 
@@ -534,8 +535,8 @@ public class CircleProgressView extends View {
             matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
             mBarPaint.getShader().setLocalMatrix(matrix);
             mBarPaint.setColor(barColors[0]);
-        } else if (mBarColors.length == 1) {
-            mBarPaint.setColor(mBarColors[0]);
+        } else if (barColors.length == 1) {
+            mBarPaint.setColor(barColors[0]);
             mBarPaint.setShader(null);
         } else {
             mBarPaint.setColor(mBarColorStandard);
@@ -625,10 +626,10 @@ public class CircleProgressView extends View {
     /**
      * Sets the auto text mode.
      *
-     * @param _autoTextValue The mode
+     * @param _textValue The mode
      */
-    public void setTextMode(TextMode _autoTextValue) {
-        mTextMode = _autoTextValue;
+    public void setTextMode(TextMode _textValue) {
+        mTextMode = _textValue;
     }
 
     /**
@@ -731,6 +732,25 @@ public class CircleProgressView extends View {
             throw new IllegalArgumentException("decimalFormat must not be null!");
         }
         this.decimalFormat = decimalFormat;
+    }
+
+    /**
+     * Sets interpolator for value animations.
+     *
+     * @param interpolator the interpolator
+     */
+    public void setValueInterpolator(TimeInterpolator interpolator) {
+        mAnimationHandler.setValueInterpolator(interpolator);
+    }
+
+
+    /**
+     * Sets the interpolator for length changes of the bar.
+     *
+     * @param mLengthChangeInterpolator the interpolator
+     */
+    public void setLengthChangeInterpolator(TimeInterpolator interpolator) {
+        mAnimationHandler.setLengthChangeInterpolator(interpolator);
     }
 
     //endregion getter/setter

@@ -1,5 +1,5 @@
 # CircleView
-A animated circle view. Can be used in 'value mode' or 'spinning mode'. Nice transitions between spinning and value. Can be used as a loading indicator and to show progress or values in a circular manner. In seek mode, it can also be used to set a value.
+An animated circle view. Can be used in 'value mode' or 'spinning mode'. Nice transitions between spinning and value. Can be used as a loading indicator and to show progress or values in a circular manner. In seek mode, it can also be used to set a value.
 
 ![MainImage](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/big.png)
 
@@ -9,7 +9,7 @@ Try it out [here](https://play.google.com/store/apps/details?id=at.grabner.examp
 ![animation demo](https://raw.githubusercontent.com/jakob-grabner/Circle-Progress-View/master/media/demo.gif)
 
 - Animated set value.
-- spinning mode.
+- Spinning mode.
 - Transition from spinning mode to value mode.
 
 ## Fully customizable:

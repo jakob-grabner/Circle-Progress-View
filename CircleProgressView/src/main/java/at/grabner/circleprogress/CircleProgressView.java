@@ -1,4 +1,4 @@
-package at.grabner.circleprogress;
+﻿package at.grabner.circleprogress;
 
 import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
@@ -276,6 +276,10 @@ public class CircleProgressView extends View {
 
     public int getFillColor() {
         return mBackgroundCirclePaint.getColor();
+    }
+
+    public float getCurrentValue() {
+        return mCurrentValue;
     }
 
     public float getMaxValue() {

@@ -28,20 +28,20 @@ The spin bar color can consist of a single color or a gradient from up to 4 colo
 
 ## Block Mode
 - Via XML
-```
-        CircleProgressView:cpv_blockCount="18"
-        CircleProgressView:cpv_blockScale="0.9"
+```java
+CircleProgressView:cpv_blockCount="18"
+CircleProgressView:cpv_blockScale="0.9"
 ```
 
 ## Seek Mode
 Set value on touch input. Enable it:
 - Via Code:
-```
-	circleview.setSeekModeEnabled(true);
+```java
+circleview.setSeekModeEnabled(true);
 ```
 - Via XML:
-```
-	CircleProgressView:cpv_seekMode="true"
+```java
+CircleProgressView:cpv_seekMode="true"
 ```
 
 
@@ -51,20 +51,19 @@ For more examples take a look at the example app.
 ## Add it to your project:
 
 Get the latest release from https://jitpack.io/#jakob-grabner/Circle-Progress-View 
+```groovy
+allprojects {
+    repositories {
+        // ...
+        maven { url "https://jitpack.io" }
+    }
+}
 
-	allprojects {
-	    repositories {
-	        // ...
-	        maven { url "https://jitpack.io" }
-	    }
-	}
-	
-	
-	dependencies {
-		// ...
-	        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
-	}
-	
+dependencies {
+	// ...
+        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
+}
+```
 ## JavaDoc
 
 Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.9/javadoc/).

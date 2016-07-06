@@ -30,6 +30,11 @@
         <attr name="cpv_barColor2" format="color"/>
         <attr name="cpv_barColor3" format="color"/>
         <attr name="cpv_startAngle" format="integer"/>
+        <attr name="cpv_barStrokeCap" format="enum">
+            <enum name="Butt" value="0"/>
+            <enum name="Round" value="1"/>
+            <enum name="Square" value="2"/>
+        </attr>
 
         <!-- Spinner-->
         <attr name="cpv_spinColor" format="color"/>

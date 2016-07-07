@@ -525,23 +525,7 @@ public class CircleProgressView extends View {
      */
     public void setBarColor(@ColorInt int... barColors) {
         this.mBarColors = barColors;
-        if (barColors.length > 1) {
-            mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), barColors, null));
-            Matrix matrix = new Matrix();
-            mBarPaint.getShader().getLocalMatrix(matrix);
-
-            matrix.postTranslate(-mCircleBounds.centerX(), -mCircleBounds.centerY());
-            matrix.postRotate(mStartAngle);
-            matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
-            mBarPaint.getShader().setLocalMatrix(matrix);
-            mBarPaint.setColor(barColors[0]);
-        } else if (barColors.length == 1) {
-            mBarPaint.setColor(barColors[0]);
-            mBarPaint.setShader(null);
-        } else {
-            mBarPaint.setColor(mBarColorStandard);
-            mBarPaint.setShader(null);
-        }
+        setupBarPaint();
     }
 
     /**
@@ -814,12 +798,13 @@ public class CircleProgressView extends View {
             mBarColors = new int[]{a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard), a.getColor(R.styleable.CircleProgressView_cpv_barColor, mBarColorStandard)};
         }
 
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_barStrokeCap)) {
+            setBarStrokeCap(StrokeCap.values()[a.getInt(R.styleable.CircleProgressView_cpv_barStrokeCap, 0)].paintCap);
+        }
+
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_cpv_spinColor, mSpinnerColor));
-
-
         setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_cpv_spinBarLength,
                 mSpinningBarLengthOrig));
-
 
         if (a.hasValue(R.styleable.CircleProgressView_cpv_textSize)) {
             setTextSize((int) a.getDimension(R.styleable.CircleProgressView_cpv_textSize, mTextSize));
@@ -1327,7 +1312,6 @@ public class CircleProgressView extends View {
     }
 
     private void setupBarPaint() {
-
         if (mBarColors.length > 1) {
             mBarPaint.setShader(new SweepGradient(mCircleBounds.centerX(), mCircleBounds.centerY(), mBarColors, null));
             Matrix matrix = new Matrix();
@@ -1337,8 +1321,12 @@ public class CircleProgressView extends View {
             matrix.postRotate(mStartAngle);
             matrix.postTranslate(mCircleBounds.centerX(), mCircleBounds.centerY());
             mBarPaint.getShader().setLocalMatrix(matrix);
-        } else {
             mBarPaint.setColor(mBarColors[0]);
+        } else if (mBarColors.length == 1) {
+            mBarPaint.setColor(mBarColors[0]);
+            mBarPaint.setShader(null);
+        } else {
+            mBarPaint.setColor(mBarColorStandard);
             mBarPaint.setShader(null);
         }
 

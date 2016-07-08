@@ -56,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 //        mCircleView.setValue(0);
 //        mCircleView.setValueAnimated(24);
 
+        //growing/rotating counter-clockwise
+//        mCircleView.setDirection(Direction.CCW)
+
 //        //show unit
 //        mCircleView.setUnit("%");
 //        mCircleView.setUnitVisible(mShowUnit);

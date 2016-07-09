@@ -22,6 +22,10 @@
 
 
         <!-- Progress Bar -->
+        <attr name="cpv_direction" format="enum">
+            <enum name="CW" value="0"/>
+            <enum name="CCW" value="1"/>
+        </attr>
         <attr name="cpv_value" format="float"/>
         <attr name="cpv_maxValue" format="float"/>
         <attr name="cpv_barWidth" format="dimension"/>

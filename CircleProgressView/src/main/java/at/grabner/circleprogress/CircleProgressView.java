@@ -62,6 +62,7 @@ public class CircleProgressView extends View {
     //region members
 
     //value animation
+    Direction mDirection = Direction.CW;
     float mCurrentValue = 42;
     float mValueTo = 0;
     float mValueFrom = 0;
@@ -657,6 +658,13 @@ public class CircleProgressView extends View {
     }
 
     /**
+     * Sets the direction of circular motion (clockwise or counter-clockwise).
+     */
+    public void setDirection(Direction direction) {
+        mDirection = direction;
+    }
+
+    /**
      * Set the value of the circle view without an animation.
      * Stops any currently active animations.
      *
@@ -778,6 +786,8 @@ public class CircleProgressView extends View {
 
         setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_cpv_spinSpeed,
                 mSpinSpeed));
+
+        setDirection(Direction.values()[a.getInt(R.styleable.CircleProgressView_cpv_direction, 0)]);
 
         float value = a.getFloat(R.styleable.CircleProgressView_cpv_value, mCurrentValue);
         setValue(value);
@@ -1484,14 +1494,19 @@ public class CircleProgressView extends View {
     }
 
     private void drawSpinner(Canvas canvas) {
-
         if (mSpinningBarLengthCurrent < 0) {
             mSpinningBarLengthCurrent = 1;
         }
-        float startAngle = (mStartAngle + mCurrentSpinnerDegreeValue - mSpinningBarLengthCurrent);
+
+        float startAngle;
+        if (mDirection == Direction.CW) {
+            startAngle = mStartAngle + mCurrentSpinnerDegreeValue - mSpinningBarLengthCurrent;
+        } else {
+            startAngle = mStartAngle - mCurrentSpinnerDegreeValue;
+        }
+
         canvas.drawArc(mCircleBounds, startAngle, mSpinningBarLengthCurrent, false,
                 mBarSpinnerPaint);
-
     }
 
     private void drawTextWithUnit(Canvas canvas) {
@@ -1610,10 +1625,11 @@ public class CircleProgressView extends View {
     }
 
     private void drawBar(Canvas _canvas, float _degrees) {
+        float startAngle = mDirection == Direction.CW ? mStartAngle : mStartAngle - _degrees;
         if (!mShowBlock) {
-            _canvas.drawArc(mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+            _canvas.drawArc(mCircleBounds, startAngle, _degrees, false, mBarPaint);
         } else {
-            drawBlocks(_canvas, mCircleBounds, mStartAngle, _degrees, false, mBarPaint);
+            drawBlocks(_canvas, mCircleBounds, startAngle, _degrees, false, mBarPaint);
         }
 
     }
@@ -1657,7 +1673,7 @@ public class CircleProgressView extends View {
             case MotionEvent.ACTION_UP: {
                 mTouchEventCount = 0;
                 PointF point = new PointF(event.getX(), event.getY());
-                float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
+                float angle = getRotationAngleForPointFromStart(point);
                 setValueAnimated(mMaxValue / 360f * angle, 800);
                 return true;
             }
@@ -1665,7 +1681,7 @@ public class CircleProgressView extends View {
                 mTouchEventCount++;
                 if (mTouchEventCount > 5) { //touch/move guard
                     PointF point = new PointF(event.getX(), event.getY());
-                    float angle = normalizeAngle(Math.round(calcRotationAngleInDegrees(mCenter, point) - mStartAngle));
+                    float angle = getRotationAngleForPointFromStart(point);
                     setValue(mMaxValue / 360f * angle);
                     return true;
                 } else {
@@ -1680,6 +1696,12 @@ public class CircleProgressView extends View {
 
 
         return super.onTouchEvent(event);
+    }
+
+    private float getRotationAngleForPointFromStart(PointF point) {
+        long angle = Math.round(calcRotationAngleInDegrees(mCenter, point));
+        float fromStart = mDirection == Direction.CW ? angle - mStartAngle : mStartAngle - angle;
+        return normalizeAngle(fromStart);
     }
 
 

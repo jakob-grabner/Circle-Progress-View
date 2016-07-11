@@ -109,6 +109,11 @@ public class CircleProgressView extends View {
     private int mStartAngle = 270;
     private float mOuterContourSize = 1;
     private float mInnerContourSize = 1;
+
+    // Bar Line width and type
+    private int mBarStartEndLineWidth = 0;
+    private BarStartEndLine mBarStartEndLine = BarStartEndLine.NONE;
+    private int mBarStartEndLineColor = 0xAA000000;
     //Default text sizes
     private int mUnitTextSize = 10;
     private int mTextSize = 10;
@@ -132,6 +137,7 @@ public class CircleProgressView extends View {
     //Paints
     private Paint mBarPaint = new Paint();
     private Paint mBarSpinnerPaint = new Paint();
+    private Paint mBarStartEndLinePaint = new Paint();
     private Paint mBackgroundCirclePaint = new Paint();
     private Paint mRimPaint = new Paint();
     private Paint mTextPaint = new Paint();
@@ -164,7 +170,6 @@ public class CircleProgressView extends View {
     private float mBlockScale = 0.9f;
     private float mBlockDegree = 360 / mBlockCount;
     private float mBlockScaleDegree = mBlockDegree * mBlockScale;
-
 
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
@@ -274,6 +279,20 @@ public class CircleProgressView extends View {
 
     //----------------------------------
     //region getter/setter
+    public BarStartEndLine getBarStartEndLine() {
+        return mBarStartEndLine;
+    }
+
+    /**
+     * @param barWidth         The width of the progress bar in pixel.
+     * @param _barStartEndLine The type of the line in the Bar.
+     */
+    public void setBarStartEndLine(int barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor) {
+        mBarStartEndLineWidth = barWidth;
+        mBarStartEndLine = _barStartEndLine;
+        mBarStartEndLineColor = _lineColor;
+    }
+
     public int[] getBarColors() {
         return mBarColors;
     }
@@ -903,6 +922,12 @@ public class CircleProgressView extends View {
             setBarStrokeCap(StrokeCap.values()[a.getInt(R.styleable.CircleProgressView_cpv_barStrokeCap, 0)].paintCap);
         }
 
+        if (a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLineWidth) && a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLine)) {
+            setBarStartEndLine((int) a.getDimension(R.styleable.CircleProgressView_cpv_barStartEndLineWidth, 0),
+                    BarStartEndLine.values()[a.getInt(R.styleable.CircleProgressView_cpv_barStartEndLine, 3)],
+                    a.getColor(R.styleable.CircleProgressView_cpv_barStartEndLineColor, mBarStartEndLineColor));
+        }
+
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_cpv_spinColor, mSpinnerColor));
         setSpinningBarLength(a.getFloat(R.styleable.CircleProgressView_cpv_spinBarLength,
                 mSpinningBarLengthOrig));
@@ -969,7 +994,6 @@ public class CircleProgressView extends View {
             setBlockScale(a.getFloat(R.styleable.CircleProgressView_cpv_blockScale, 0.9f));
         }
 
-
         if (a.hasValue(R.styleable.CircleProgressView_cpv_textTypeface)) {
             try {
                 textTypeface = Typeface.createFromAsset(getContext().getAssets(), a.getString(R.styleable.CircleProgressView_cpv_textTypeface));
@@ -996,7 +1020,6 @@ public class CircleProgressView extends View {
                 Log.w(TAG, exception.getMessage());
             }
         }
-
 
         // Recycle
         a.recycle();
@@ -1381,6 +1404,14 @@ public class CircleProgressView extends View {
         setupTextPaint();
         setupBackgroundCirclePaint();
         setupRimPaint();
+        setupBarStartEndLinePaint();
+    }
+
+    private void setupBarStartEndLinePaint() {
+        mBarStartEndLinePaint.setColor(mBarStartEndLineColor);
+        mBarStartEndLinePaint.setAntiAlias(true);
+        mBarStartEndLinePaint.setStyle(Style.STROKE);
+        mBarStartEndLinePaint.setStrokeWidth(mBarStartEndLineWidth);
     }
 
     private void setupOuterContourPaint() {
@@ -1503,18 +1534,51 @@ public class CircleProgressView extends View {
             drawTextWithUnit(canvas);
         }
 
-
         if (mClippingBitmap != null) {
             canvas.drawBitmap(mClippingBitmap, 0, 0, mMaskPaint);
         }
 
+        if (mBarStartEndLineWidth > 0 && mBarStartEndLine != BarStartEndLine.NONE) {
+            drawStartEndLine(canvas, degrees);
+        }
+
+    }
+
+    private void drawStartEndLine(Canvas _canvas, float _degrees) {
+
+        // Signal to adjust ccw or cw
+        int signal = mDirection == Direction.CW ? 1 : -1;
+
+        int radius = (mLayoutWidth / 2);
+
+        float yFactor = (float) Math.cos(Math.toRadians(_degrees));
+        float xFactor = (float) (signal * Math.sin(Math.toRadians(_degrees)));
+
+        float yInitial = radius - yFactor * (radius - mBarWidth);
+        float xInitial = radius + xFactor * (radius - mBarWidth);
+
+        float yFinal = radius - yFactor * radius;
+        float xFinal = radius + xFactor * radius;
+
+        switch (mBarStartEndLine) {
+            case START:
+                // NOTE: We are drawing the start line always, could be optimized.
+                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
+                break;
+            case END:
+                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
+                break;
+            case BOTH:
+                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
+                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
+                break;
+        }
     }
 
     private void drawDebug(Canvas canvas) {
         Paint innerRectPaint = new Paint();
         innerRectPaint.setColor(Color.YELLOW);
         canvas.drawRect(mCircleBounds, innerRectPaint);
-
     }
 
     private void drawBlocks(Canvas _canvas, RectF circleBounds, float startAngle, float _degrees, boolean userCenter, Paint paint) {
@@ -1616,7 +1680,6 @@ public class CircleProgressView extends View {
             }
         }
 
-
         if (DEBUG) {
             Paint rectPaint = new Paint();
             rectPaint.setColor(Color.MAGENTA);
@@ -1630,7 +1693,6 @@ public class CircleProgressView extends View {
 
         if (mShowUnit) {
 
-
             if (mIsAutoColorEnabled) {
                 mUnitTextPaint.setColor(calcTextColor(mCurrentValue));
             }
@@ -1642,8 +1704,6 @@ public class CircleProgressView extends View {
                 } else {
                     setUnitTextBoundsAndSizeWithFixedTextSize(unitGapWidthHalf * 2f, unitGapHeightHalf * 2f);
                 }
-
-
             }
 
             if (DEBUG) {
@@ -1663,7 +1723,6 @@ public class CircleProgressView extends View {
         } else {
             drawBlocks(_canvas, mCircleBounds, startAngle, _degrees, false, mBarPaint);
         }
-
     }
 
     //endregion draw

@@ -39,6 +39,14 @@
             <enum name="Round" value="1" />
             <enum name="Square" value="2" />
         </attr>
+        <attr name="cpv_barStartEndLineWidth" format="dimension" />
+        <attr name="cpv_barStartEndLineColor" format="color" />
+        <attr name="cpv_barStartEndLine" format="enum">
+            <enum name="None" value="0" />
+            <enum name="Start" value="1" />
+            <enum name="End" value="2" />
+            <enum name="Both" value="3" />
+        </attr>
 
         <!-- Spinner-->
         <attr name="cpv_spinColor" format="color" />

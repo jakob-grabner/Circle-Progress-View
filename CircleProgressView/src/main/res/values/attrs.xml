@@ -63,6 +63,7 @@
         <!-- Block -->
         <attr name="cpv_blockCount" format="integer"/>
         <attr name="cpv_blockScale" format="float"/>
+        <attr format="boolean" name="cpv_roundToBlock"/>
 
         <attr name="cpv_textMode" format="enum">
             <enum name="Text" value="0"/>

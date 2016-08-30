@@ -677,11 +677,10 @@ public class CircleProgressView extends View {
      */
     public void setValue(float _value) {
         // round to block
-        if (mShowBlock)
-            if (mRoundToBlock) {
-                float value_per_block = mMaxValue / (float) mBlockCount;
-                _value = Math.round(_value / value_per_block) * value_per_block;
-            }
+        if (mShowBlock && mRoundToBlock) {
+            float value_per_block = mMaxValue / (float) mBlockCount;
+            _value = Math.round(_value / value_per_block) * value_per_block;
+        }
 
         Message msg = new Message();
         msg.what = AnimationMsg.SET_VALUE.ordinal();
@@ -720,11 +719,10 @@ public class CircleProgressView extends View {
      */
     public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
         // round to block
-        if (mShowBlock)
-            if (mRoundToBlock) {
-                float value_per_block = mMaxValue / (float) mBlockCount;
-                _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
-            }
+        if (mShowBlock && mRoundToBlock){
+            float value_per_block = mMaxValue / (float) mBlockCount;
+            _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
+        }
 
         mAnimationDuration = _animationDuration;
         Message msg = new Message();

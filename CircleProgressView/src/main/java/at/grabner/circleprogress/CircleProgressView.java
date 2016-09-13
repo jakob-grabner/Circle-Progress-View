@@ -170,6 +170,7 @@ public class CircleProgressView extends View {
     private float mBlockScale = 0.9f;
     private float mBlockDegree = 360 / mBlockCount;
     private float mBlockScaleDegree = mBlockDegree * mBlockScale;
+    private boolean mRoundToBlock = false;
 
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
@@ -336,6 +337,10 @@ public class CircleProgressView extends View {
             mShowBlock = false;
         }
     }
+
+    public void setRoundToBlock(boolean _roundToBlock ) { mRoundToBlock = _roundToBlock; }
+
+    public boolean getRoundToBlock() { return mRoundToBlock; }
 
     public float getBlockScale() {
         return mBlockScale;
@@ -806,6 +811,12 @@ public class CircleProgressView extends View {
      * @param _value The value.
      */
     public void setValue(float _value) {
+        // round to block
+        if (mShowBlock && mRoundToBlock) {
+            float value_per_block = mMaxValue / (float) mBlockCount;
+            _value = Math.round(_value / value_per_block) * value_per_block;
+        }
+
         Message msg = new Message();
         msg.what = AnimationMsg.SET_VALUE.ordinal();
         msg.obj = new float[]{_value, _value};
@@ -842,6 +853,12 @@ public class CircleProgressView extends View {
      * @param _animationDuration the duration of the animation in milliseconds
      */
     public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
+        // round to block
+        if (mShowBlock && mRoundToBlock){
+            float value_per_block = mMaxValue / (float) mBlockCount;
+            _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
+        }
+
         mAnimationDuration = _animationDuration;
         Message msg = new Message();
         msg.what = AnimationMsg.SET_VALUE_ANIMATED.ordinal();
@@ -976,6 +993,8 @@ public class CircleProgressView extends View {
         setInnerContourSize(a.getDimension(R.styleable.CircleProgressView_cpv_innerContourSize, mInnerContourSize));
 
         setMaxValue(a.getFloat(R.styleable.CircleProgressView_cpv_maxValue, mMaxValue));
+
+        setRoundToBlock(a.getBoolean(R.styleable.CircleProgressView_cpv_roundToBlock, mRoundToBlock));
 
         setUnit(a.getString(R.styleable.CircleProgressView_cpv_unit));
         setUnitVisible(a.getBoolean(R.styleable.CircleProgressView_cpv_showUnit, mShowUnit));

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '23.0.2'
     repositories {
         maven { url "https://jitpack.io" }
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "at.grabner.example.circleprogressview"
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 2
         versionName "1.1"
     }
@@ -31,6 +31,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':CircleProgressView')
 //    compile 'com.github.jakob-grabner:Circle-Progress-View:v1+'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
 }

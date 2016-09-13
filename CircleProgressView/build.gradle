@@ -3,11 +3,11 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.jakob-grabner'
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '23.0.2'
     defaultConfig {
         minSdkVersion 11
-        targetSdkVersion 23
+        targetSdkVersion 24
         versionCode 3
         versionName "1.2"
     }
@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:23.1.1'
+    compile 'com.android.support:support-annotations:24.2.0'
 }
 
 // build a jar with source files
@@ -44,6 +44,7 @@ task javadoc(type: Javadoc) {
     failOnError  false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
 }
 
 // build a jar with javadoc

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
 
     compileSdkVersion 24
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '24.0.2'
     repositories {
         maven { url "https://jitpack.io" }
     }
@@ -25,12 +25,16 @@ android {
     }
     productFlavors {
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_6
+        targetCompatibility JavaVersion.VERSION_1_6
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':CircleProgressView')
-//    compile 'com.github.jakob-grabner:Circle-Progress-View:v1+'
+    //    compile 'com.github.jakob-grabner:Circle-Progress-View:v1+'
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
 }

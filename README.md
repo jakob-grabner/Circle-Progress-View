@@ -61,9 +61,9 @@ allprojects {
 
 dependencies {
 	// ...
-        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9'
+        compile 'com.github.jakob-grabner:Circle-Progress-View:v1.2.9.1'
 }
 ```
 ## JavaDoc
 
-Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.9/javadoc/).
+Get it [here](https://jitpack.io/com/github/jakob-grabner/Circle-Progress-View/v1.2.9.1/javadoc/).

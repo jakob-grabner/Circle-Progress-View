@@ -128,7 +128,7 @@ public class AnimationHandler extends Handler {
                         if (circleView.mCurrentSpinnerDegreeValue > 360) {
                             circleView.mCurrentSpinnerDegreeValue = 0;
                         }
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
                         circleView.invalidate();
                         break;
                 }
@@ -142,7 +142,7 @@ public class AnimationHandler extends Handler {
                         if (circleView.mAnimationStateChangedListener != null) {
                             circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
                         }
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
 
                         break;
                     case STOP_SPINNING:
@@ -171,7 +171,7 @@ public class AnimationHandler extends Handler {
                                 circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
                             }
                         }
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
                         circleView.invalidate();
                         break;
                 }
@@ -196,7 +196,7 @@ public class AnimationHandler extends Handler {
                     case SET_VALUE_ANIMATED:
                         circleView.mValueFrom = 0; // start from zero after spinning
                         circleView.mValueTo = ((float[]) msg.obj)[1];
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
 
                         break;
                     case TICK:
@@ -250,7 +250,7 @@ public class AnimationHandler extends Handler {
                         } else {
                             circleView.invalidate();
                         }
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
                         break;
                 }
 
@@ -283,7 +283,7 @@ public class AnimationHandler extends Handler {
                             }
                             circleView.mCurrentValue = circleView.mValueTo;
                         }
-                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+                        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
                         circleView.invalidate();
                         break;
                 }
@@ -301,7 +301,7 @@ public class AnimationHandler extends Handler {
         if (circleView.mAnimationStateChangedListener != null) {
             circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
         }
-        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
     }
 
     private void enterEndSpinningStartAnimating(CircleProgressView circleView, Message msg) {
@@ -315,7 +315,7 @@ public class AnimationHandler extends Handler {
         mLengthChangeAnimationStartTime = System.currentTimeMillis();
         mSpinningBarLengthStart = circleView.mSpinningBarLengthCurrent;
 
-        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
 
     }
 
@@ -325,7 +325,7 @@ public class AnimationHandler extends Handler {
         if (circleView.mAnimationStateChangedListener != null) {
             circleView.mAnimationStateChangedListener.onAnimationStateChanged(circleView.mAnimationState);
         }
-        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
     }
 
     private void initReduceAnimation(CircleProgressView circleView) {
@@ -353,7 +353,7 @@ public class AnimationHandler extends Handler {
         mLengthChangeAnimationDuration = ((stepsTillFinish * circleView.mFrameDelayMillis) * 2f);
 
 
-        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis-(SystemClock.uptimeMillis() - mFrameStartTime));
+        sendEmptyMessageDelayed(AnimationMsg.TICK.ordinal(), circleView.mFrameDelayMillis - (SystemClock.uptimeMillis() - mFrameStartTime));
     }
 
 

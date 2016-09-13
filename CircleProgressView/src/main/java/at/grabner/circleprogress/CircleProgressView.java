@@ -1,4 +1,4 @@
-﻿package at.grabner.circleprogress;
+package at.grabner.circleprogress;
 
 import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
@@ -110,7 +110,7 @@ public class CircleProgressView extends View {
     private float mOuterContourSize = 1;
     private float mInnerContourSize = 1;
 
-    // Bar Line width and type
+    // Bar start/end width and type
     private int mBarStartEndLineWidth = 0;
     private BarStartEndLine mBarStartEndLine = BarStartEndLine.NONE;
     private int mBarStartEndLineColor = 0xAA000000;
@@ -285,11 +285,14 @@ public class CircleProgressView extends View {
     }
 
     /**
-     * @param barWidth         The width of the progress bar in pixel.
-     * @param _barStartEndLine The type of the line in the Bar.
+     * Allows to add a line to the start/end of the bar
+     *
+     * @param _barWidth        The width of the line on the start/end of the bar in pixel.
+     * @param _barStartEndLine The type of line on the start/end of the bar.
+     * @param _lineColor       The line color
      */
-    public void setBarStartEndLine(int barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor) {
-        mBarStartEndLineWidth = barWidth;
+    public void setBarStartEndLine(int _barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor) {
+        mBarStartEndLineWidth = _barWidth;
         mBarStartEndLine = _barStartEndLine;
         mBarStartEndLineColor = _lineColor;
     }
@@ -338,9 +341,13 @@ public class CircleProgressView extends View {
         }
     }
 
-    public void setRoundToBlock(boolean _roundToBlock ) { mRoundToBlock = _roundToBlock; }
+    public void setRoundToBlock(boolean _roundToBlock) {
+        mRoundToBlock = _roundToBlock;
+    }
 
-    public boolean getRoundToBlock() { return mRoundToBlock; }
+    public boolean getRoundToBlock() {
+        return mRoundToBlock;
+    }
 
     public float getBlockScale() {
         return mBlockScale;
@@ -858,7 +865,7 @@ public class CircleProgressView extends View {
      */
     public void setValueAnimated(float _valueFrom, float _valueTo, long _animationDuration) {
         // round to block
-        if (mShowBlock && mRoundToBlock){
+        if (mShowBlock && mRoundToBlock) {
             float value_per_block = mMaxValue / (float) mBlockCount;
             _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
         }
@@ -871,8 +878,6 @@ public class CircleProgressView extends View {
         triggerOnProgressChanged(_valueTo);
     }
 
-    //endregion getter/setter
-    //----------------------------------
 
     public DecimalFormat getDecimalFormat() {
         return decimalFormat;
@@ -897,11 +902,15 @@ public class CircleProgressView extends View {
     /**
      * Sets the interpolator for length changes of the bar.
      *
-     * @param mLengthChangeInterpolator the interpolator
+     * @param interpolator the interpolator
      */
     public void setLengthChangeInterpolator(TimeInterpolator interpolator) {
         mAnimationHandler.setLengthChangeInterpolator(interpolator);
     }
+
+    //endregion getter/setter
+    //----------------------------------
+
 
     /**
      * Parse the attributes passed to the view from the XML

@@ -20,7 +20,6 @@
         <attr name="cpv_unitToTextScale" format="float" />
         <attr name="cpv_autoTextSize" format="boolean" />
 
-
         <!-- Progress Bar -->
         <attr name="cpv_direction" format="enum">
             <enum name="CW" value="0" />
@@ -73,9 +72,9 @@
         <attr name="cpv_seekMode" format="boolean" />
 
         <!-- Block -->
-        <attr format="boolean" name="cpv_roundToBlock"/>
-        <attr name="cpv_blockScale" format="float"/>
-        <attr name="cpv_blockCount" format="integer"/>
+        <attr name="cpv_roundToBlock" format="boolean" />
+        <attr name="cpv_blockScale" format="float" />
+        <attr name="cpv_blockCount" format="integer" />
 
         <attr name="cpv_textMode" format="enum">
             <enum name="Text" value="0" />

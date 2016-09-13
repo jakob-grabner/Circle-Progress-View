@@ -10,5 +10,4 @@ public enum UnitPosition {
     RIGHT_TOP,
     LEFT_BOTTOM,
     RIGHT_BOTTOM
-
 }

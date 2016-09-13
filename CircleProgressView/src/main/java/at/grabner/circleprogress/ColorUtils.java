@@ -19,7 +19,7 @@ public class ColorUtils {
 
 
     private static int interpolate(float a, float b, float proportion) {
-        return Math.round((a * ( proportion)) + (b * (1-proportion)));
+        return Math.round((a * (proportion)) + (b * (1 - proportion)));
     }
 
 

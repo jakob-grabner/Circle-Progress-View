@@ -84,6 +84,8 @@ public class CircleProgressView extends View {
     float mValueTo = 0;
     float mValueFrom = 0;
     float mMaxValue = 100;
+    float mMinValueAllowed = 0;
+    float mMaxValueAllowed = -1;
     // spinner animation
     float mSpinningBarLengthCurrent = 0;
     float mSpinningBarLengthOrig = 42;
@@ -171,6 +173,7 @@ public class CircleProgressView extends View {
     private float mBlockDegree = 360 / mBlockCount;
     private float mBlockScaleDegree = mBlockDegree * mBlockScale;
     private boolean mRoundToBlock = false;
+    private boolean mRoundToWholeNumber = false;
 
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
@@ -349,6 +352,14 @@ public class CircleProgressView extends View {
         return mRoundToBlock;
     }
 
+    public void setRoundToWholeNumber (boolean roundToWholeNumber) {
+        mRoundToWholeNumber = roundToWholeNumber;
+    }
+
+    public boolean getRoundToWholeNumber() {
+        return mRoundToWholeNumber;
+    }
+
     public float getBlockScale() {
         return mBlockScale;
     }
@@ -430,6 +441,10 @@ public class CircleProgressView extends View {
         return mCurrentValue;
     }
 
+    public float getMinValueAllowed() { return mMinValueAllowed; }
+
+    public float getMaxValueAllowed() { return mMaxValueAllowed; }
+
     public float getMaxValue() {
         return mMaxValue;
     }
@@ -443,6 +458,20 @@ public class CircleProgressView extends View {
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
     }
+
+    /**
+     * The min value allowed of the progress bar. Used to limit the min possible value of the current value.
+     *
+     * @param _minValueAllowed The min value allowed.
+     */
+    public void setMinValueAllowed(@FloatRange(from = 0) float _minValueAllowed) { mMinValueAllowed = _minValueAllowed; }
+
+    /**
+     * The max value allowed of the progress bar. Used to limit the max possible value of the current value.
+     *
+     * @param _maxValueAllowed The max value allowed.
+     */
+    public void setMaxValueAllowed(@FloatRange(from = 0) float _maxValueAllowed) { mMaxValueAllowed = _maxValueAllowed; }
 
     /**
      * @return The relative size (scale factor) of the unit text size to the text size
@@ -826,7 +855,16 @@ public class CircleProgressView extends View {
         if (mShowBlock && mRoundToBlock) {
             float value_per_block = mMaxValue / (float) mBlockCount;
             _value = Math.round(_value / value_per_block) * value_per_block;
+
+        } else if (mRoundToWholeNumber) { // round to whole number
+            _value = Math.round(_value);
         }
+
+        // respect min and max values allowed
+        _value = Math.max(mMinValueAllowed, _value);
+
+        if (mMaxValueAllowed >= 0)
+            _value = Math.min(mMaxValueAllowed, _value);
 
         Message msg = new Message();
         msg.what = AnimationMsg.SET_VALUE.ordinal();
@@ -868,7 +906,16 @@ public class CircleProgressView extends View {
         if (mShowBlock && mRoundToBlock) {
             float value_per_block = mMaxValue / (float) mBlockCount;
             _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
+
+        } else if (mRoundToWholeNumber) {
+            _valueTo = Math.round(_valueTo);
         }
+
+        // respect min and max values allowed
+        _valueTo = Math.max(mMinValueAllowed, _valueTo);
+
+        if (mMaxValueAllowed >= 0)
+            _valueTo = Math.min(mMaxValueAllowed, _valueTo);
 
         mAnimationDuration = _animationDuration;
         Message msg = new Message();
@@ -1007,7 +1054,11 @@ public class CircleProgressView extends View {
 
         setMaxValue(a.getFloat(R.styleable.CircleProgressView_cpv_maxValue, mMaxValue));
 
+        setMinValueAllowed(a.getFloat(R.styleable.CircleProgressView_cpv_minValueAllowed, mMinValueAllowed));
+        setMaxValueAllowed(a.getFloat(R.styleable.CircleProgressView_cpv_maxValueAllowed, mMaxValueAllowed));
+
         setRoundToBlock(a.getBoolean(R.styleable.CircleProgressView_cpv_roundToBlock, mRoundToBlock));
+        setRoundToWholeNumber(a.getBoolean(R.styleable.CircleProgressView_cpv_roundToWholeNumber, mRoundToWholeNumber));
 
         setUnit(a.getString(R.styleable.CircleProgressView_cpv_unit));
         setUnitVisible(a.getBoolean(R.styleable.CircleProgressView_cpv_showUnit, mShowUnit));

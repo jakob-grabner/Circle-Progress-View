@@ -27,6 +27,8 @@
         </attr>
         <attr name="cpv_value" format="float" />
         <attr name="cpv_maxValue" format="float" />
+        <attr name="cpv_minValueAllowed" format="float" />
+        <attr name="cpv_maxValueAllowed" format="float" />
         <attr name="cpv_barWidth" format="dimension" />
         <attr name="cpv_barColor" format="color" />
         <attr name="cpv_barColor1" format="color" />
@@ -73,6 +75,7 @@
 
         <!-- Block -->
         <attr name="cpv_roundToBlock" format="boolean" />
+        <attr name="cpv_roundToWholeNumber" format="boolean" />
         <attr name="cpv_blockScale" format="float" />
         <attr name="cpv_blockCount" format="integer" />
 

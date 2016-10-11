@@ -116,6 +116,7 @@ public class CircleProgressView extends View {
     private int mBarStartEndLineWidth = 0;
     private BarStartEndLine mBarStartEndLine = BarStartEndLine.NONE;
     private int mBarStartEndLineColor = 0xAA000000;
+    private float mBarStartEndLineSweep = 10f;
     //Default text sizes
     private int mUnitTextSize = 10;
     private int mTextSize = 10;
@@ -290,14 +291,16 @@ public class CircleProgressView extends View {
     /**
      * Allows to add a line to the start/end of the bar
      *
-     * @param _barWidth        The width of the line on the start/end of the bar in pixel.
+     * @param _barWidth        The width of the stroke on the start/end of the bar in pixel.
      * @param _barStartEndLine The type of line on the start/end of the bar.
      * @param _lineColor       The line color
+     * @param _sweepWidth      The sweep amount in degrees for the start and end bars to cover.
      */
-    public void setBarStartEndLine(int _barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor) {
+    public void setBarStartEndLine(int _barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor, float _sweepWidth) {
         mBarStartEndLineWidth = _barWidth;
         mBarStartEndLine = _barStartEndLine;
         mBarStartEndLineColor = _lineColor;
+        mBarStartEndLineSweep = _sweepWidth;
     }
 
     public int[] getBarColors() {
@@ -1002,7 +1005,8 @@ public class CircleProgressView extends View {
         if (a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLineWidth) && a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLine)) {
             setBarStartEndLine((int) a.getDimension(R.styleable.CircleProgressView_cpv_barStartEndLineWidth, 0),
                     BarStartEndLine.values()[a.getInt(R.styleable.CircleProgressView_cpv_barStartEndLine, 3)],
-                    a.getColor(R.styleable.CircleProgressView_cpv_barStartEndLineColor, mBarStartEndLineColor));
+                    a.getColor(R.styleable.CircleProgressView_cpv_barStartEndLineColor, mBarStartEndLineColor),
+                    a.getFloat(R.styleable.CircleProgressView_cpv_barStartEndLineSweep, mBarStartEndLineSweep));
         }
 
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_cpv_spinColor, mSpinnerColor));
@@ -1628,33 +1632,19 @@ public class CircleProgressView extends View {
     }
 
     private void drawStartEndLine(Canvas _canvas, float _degrees) {
+        if (_degrees == 0f)
+            return;
 
-        // Signal to adjust ccw or cw
-        int signal = mDirection == Direction.CW ? 1 : -1;
+        float startAngle = mDirection == Direction.CW ? mStartAngle : mStartAngle - _degrees;
 
-        int radius = (mLayoutWidth / 2);
+        startAngle -= mBarStartEndLineSweep / 2f;
 
-        float yFactor = (float) Math.cos(Math.toRadians(_degrees));
-        float xFactor = (float) (signal * Math.sin(Math.toRadians(_degrees)));
+        if (mBarStartEndLine == BarStartEndLine.START || mBarStartEndLine == BarStartEndLine.BOTH) {
+            _canvas.drawArc(mCircleBounds, startAngle, mBarStartEndLineSweep, false, mBarStartEndLinePaint);
+        }
 
-        float yInitial = radius - yFactor * (radius - mBarWidth);
-        float xInitial = radius + xFactor * (radius - mBarWidth);
-
-        float yFinal = radius - yFactor * radius;
-        float xFinal = radius + xFactor * radius;
-
-        switch (mBarStartEndLine) {
-            case START:
-                // NOTE: We are drawing the start line always, could be optimized.
-                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
-                break;
-            case END:
-                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
-                break;
-            case BOTH:
-                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
-                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
-                break;
+        if (mBarStartEndLine == BarStartEndLine.END || mBarStartEndLine == BarStartEndLine.BOTH) {
+            _canvas.drawArc(mCircleBounds, startAngle + _degrees, mBarStartEndLineSweep, false, mBarStartEndLinePaint);
         }
     }
 

@@ -41,6 +41,7 @@
             <enum name="Square" value="2" />
         </attr>
         <attr name="cpv_barStartEndLineWidth" format="dimension" />
+        <attr name="cpv_barStartEndLineSweep" format="float" />
         <attr name="cpv_barStartEndLineColor" format="color" />
         <attr name="cpv_barStartEndLine" format="enum">
             <enum name="None" value="0" />

@@ -84,6 +84,8 @@ public class CircleProgressView extends View {
     float mValueTo = 0;
     float mValueFrom = 0;
     float mMaxValue = 100;
+    float mMinValueAllowed = 0;
+    float mMaxValueAllowed = -1;
     // spinner animation
     float mSpinningBarLengthCurrent = 0;
     float mSpinningBarLengthOrig = 42;
@@ -114,6 +116,7 @@ public class CircleProgressView extends View {
     private int mBarStartEndLineWidth = 0;
     private BarStartEndLine mBarStartEndLine = BarStartEndLine.NONE;
     private int mBarStartEndLineColor = 0xAA000000;
+    private float mBarStartEndLineSweep = 10f;
     //Default text sizes
     private int mUnitTextSize = 10;
     private int mTextSize = 10;
@@ -171,6 +174,7 @@ public class CircleProgressView extends View {
     private float mBlockDegree = 360 / mBlockCount;
     private float mBlockScaleDegree = mBlockDegree * mBlockScale;
     private boolean mRoundToBlock = false;
+    private boolean mRoundToWholeNumber = false;
 
     private int mTouchEventCount;
     private OnProgressChangedListener onProgressChangedListener;
@@ -287,14 +291,16 @@ public class CircleProgressView extends View {
     /**
      * Allows to add a line to the start/end of the bar
      *
-     * @param _barWidth        The width of the line on the start/end of the bar in pixel.
+     * @param _barWidth        The width of the stroke on the start/end of the bar in pixel.
      * @param _barStartEndLine The type of line on the start/end of the bar.
      * @param _lineColor       The line color
+     * @param _sweepWidth      The sweep amount in degrees for the start and end bars to cover.
      */
-    public void setBarStartEndLine(int _barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor) {
+    public void setBarStartEndLine(int _barWidth, BarStartEndLine _barStartEndLine, @ColorInt int _lineColor, float _sweepWidth) {
         mBarStartEndLineWidth = _barWidth;
         mBarStartEndLine = _barStartEndLine;
         mBarStartEndLineColor = _lineColor;
+        mBarStartEndLineSweep = _sweepWidth;
     }
 
     public int[] getBarColors() {
@@ -347,6 +353,14 @@ public class CircleProgressView extends View {
 
     public boolean getRoundToBlock() {
         return mRoundToBlock;
+    }
+
+    public void setRoundToWholeNumber (boolean roundToWholeNumber) {
+        mRoundToWholeNumber = roundToWholeNumber;
+    }
+
+    public boolean getRoundToWholeNumber() {
+        return mRoundToWholeNumber;
     }
 
     public float getBlockScale() {
@@ -430,6 +444,10 @@ public class CircleProgressView extends View {
         return mCurrentValue;
     }
 
+    public float getMinValueAllowed() { return mMinValueAllowed; }
+
+    public float getMaxValueAllowed() { return mMaxValueAllowed; }
+
     public float getMaxValue() {
         return mMaxValue;
     }
@@ -443,6 +461,20 @@ public class CircleProgressView extends View {
     public void setMaxValue(@FloatRange(from = 0) float _maxValue) {
         mMaxValue = _maxValue;
     }
+
+    /**
+     * The min value allowed of the progress bar. Used to limit the min possible value of the current value.
+     *
+     * @param _minValueAllowed The min value allowed.
+     */
+    public void setMinValueAllowed(@FloatRange(from = 0) float _minValueAllowed) { mMinValueAllowed = _minValueAllowed; }
+
+    /**
+     * The max value allowed of the progress bar. Used to limit the max possible value of the current value.
+     *
+     * @param _maxValueAllowed The max value allowed.
+     */
+    public void setMaxValueAllowed(@FloatRange(from = 0) float _maxValueAllowed) { mMaxValueAllowed = _maxValueAllowed; }
 
     /**
      * @return The relative size (scale factor) of the unit text size to the text size
@@ -826,7 +858,16 @@ public class CircleProgressView extends View {
         if (mShowBlock && mRoundToBlock) {
             float value_per_block = mMaxValue / (float) mBlockCount;
             _value = Math.round(_value / value_per_block) * value_per_block;
+
+        } else if (mRoundToWholeNumber) { // round to whole number
+            _value = Math.round(_value);
         }
+
+        // respect min and max values allowed
+        _value = Math.max(mMinValueAllowed, _value);
+
+        if (mMaxValueAllowed >= 0)
+            _value = Math.min(mMaxValueAllowed, _value);
 
         Message msg = new Message();
         msg.what = AnimationMsg.SET_VALUE.ordinal();
@@ -868,7 +909,16 @@ public class CircleProgressView extends View {
         if (mShowBlock && mRoundToBlock) {
             float value_per_block = mMaxValue / (float) mBlockCount;
             _valueTo = Math.round(_valueTo / value_per_block) * value_per_block;
+
+        } else if (mRoundToWholeNumber) {
+            _valueTo = Math.round(_valueTo);
         }
+
+        // respect min and max values allowed
+        _valueTo = Math.max(mMinValueAllowed, _valueTo);
+
+        if (mMaxValueAllowed >= 0)
+            _valueTo = Math.min(mMaxValueAllowed, _valueTo);
 
         mAnimationDuration = _animationDuration;
         Message msg = new Message();
@@ -955,7 +1005,8 @@ public class CircleProgressView extends View {
         if (a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLineWidth) && a.hasValue(R.styleable.CircleProgressView_cpv_barStartEndLine)) {
             setBarStartEndLine((int) a.getDimension(R.styleable.CircleProgressView_cpv_barStartEndLineWidth, 0),
                     BarStartEndLine.values()[a.getInt(R.styleable.CircleProgressView_cpv_barStartEndLine, 3)],
-                    a.getColor(R.styleable.CircleProgressView_cpv_barStartEndLineColor, mBarStartEndLineColor));
+                    a.getColor(R.styleable.CircleProgressView_cpv_barStartEndLineColor, mBarStartEndLineColor),
+                    a.getFloat(R.styleable.CircleProgressView_cpv_barStartEndLineSweep, mBarStartEndLineSweep));
         }
 
         setSpinBarColor(a.getColor(R.styleable.CircleProgressView_cpv_spinColor, mSpinnerColor));
@@ -1007,7 +1058,11 @@ public class CircleProgressView extends View {
 
         setMaxValue(a.getFloat(R.styleable.CircleProgressView_cpv_maxValue, mMaxValue));
 
+        setMinValueAllowed(a.getFloat(R.styleable.CircleProgressView_cpv_minValueAllowed, mMinValueAllowed));
+        setMaxValueAllowed(a.getFloat(R.styleable.CircleProgressView_cpv_maxValueAllowed, mMaxValueAllowed));
+
         setRoundToBlock(a.getBoolean(R.styleable.CircleProgressView_cpv_roundToBlock, mRoundToBlock));
+        setRoundToWholeNumber(a.getBoolean(R.styleable.CircleProgressView_cpv_roundToWholeNumber, mRoundToWholeNumber));
 
         setUnit(a.getString(R.styleable.CircleProgressView_cpv_unit));
         setUnitVisible(a.getBoolean(R.styleable.CircleProgressView_cpv_showUnit, mShowUnit));
@@ -1577,33 +1632,19 @@ public class CircleProgressView extends View {
     }
 
     private void drawStartEndLine(Canvas _canvas, float _degrees) {
+        if (_degrees == 0f)
+            return;
 
-        // Signal to adjust ccw or cw
-        int signal = mDirection == Direction.CW ? 1 : -1;
+        float startAngle = mDirection == Direction.CW ? mStartAngle : mStartAngle - _degrees;
 
-        int radius = (mLayoutWidth / 2);
+        startAngle -= mBarStartEndLineSweep / 2f;
 
-        float yFactor = (float) Math.cos(Math.toRadians(_degrees));
-        float xFactor = (float) (signal * Math.sin(Math.toRadians(_degrees)));
+        if (mBarStartEndLine == BarStartEndLine.START || mBarStartEndLine == BarStartEndLine.BOTH) {
+            _canvas.drawArc(mCircleBounds, startAngle, mBarStartEndLineSweep, false, mBarStartEndLinePaint);
+        }
 
-        float yInitial = radius - yFactor * (radius - mBarWidth);
-        float xInitial = radius + xFactor * (radius - mBarWidth);
-
-        float yFinal = radius - yFactor * radius;
-        float xFinal = radius + xFactor * radius;
-
-        switch (mBarStartEndLine) {
-            case START:
-                // NOTE: We are drawing the start line always, could be optimized.
-                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
-                break;
-            case END:
-                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
-                break;
-            case BOTH:
-                _canvas.drawLine(radius, 0, radius, mBarWidth, mBarStartEndLinePaint);
-                _canvas.drawLine(xInitial, yInitial, xFinal, yFinal, mBarStartEndLinePaint);
-                break;
+        if (mBarStartEndLine == BarStartEndLine.END || mBarStartEndLine == BarStartEndLine.BOTH) {
+            _canvas.drawArc(mCircleBounds, startAngle + _degrees, mBarStartEndLineSweep, false, mBarStartEndLinePaint);
         }
     }
 

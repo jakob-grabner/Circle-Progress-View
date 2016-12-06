@@ -51,6 +51,7 @@
         </attr>
 
         <!-- Spinner-->
+        <attr name="cpv_spin" format="boolean" />
         <attr name="cpv_spinColor" format="color" />
         <attr name="cpv_spinSpeed" format="float" />
         <attr name="cpv_spinBarLength" format="float" />

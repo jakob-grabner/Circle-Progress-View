@@ -93,6 +93,8 @@ public class CircleProgressView extends View {
     //Animation
     //The amount of degree to move the bar by on each draw
     float mSpinSpeed = 2.8f;
+    //Enable spin
+    boolean mSpin = false;
     /**
      * The animation duration in ms
      */
@@ -211,6 +213,10 @@ public class CircleProgressView extends View {
         mMaskPaint.setFilterBitmap(false);
         mMaskPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         setupPaints();
+
+        if (mSpin) {
+            spin();
+        }
     }
 
     private static float calcTextSizeForRect(String _text, Paint _textPaint, RectF _rectBounds) {
@@ -976,6 +982,9 @@ public class CircleProgressView extends View {
 
         setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_cpv_spinSpeed,
                 mSpinSpeed));
+
+        setSpin(a.getBoolean(R.styleable.CircleProgressView_cpv_spin,
+                mSpin));
 
         setDirection(Direction.values()[a.getInt(R.styleable.CircleProgressView_cpv_direction, 0)]);
 
@@ -1806,6 +1815,7 @@ public class CircleProgressView extends View {
      * Turn off spinning mode
      */
     public void stopSpinning() {
+        setSpin(false);
         mAnimationHandler.sendEmptyMessage(AnimationMsg.STOP_SPINNING.ordinal());
     }
 
@@ -1813,9 +1823,13 @@ public class CircleProgressView extends View {
      * Puts the view in spin mode
      */
     public void spin() {
+        setSpin(true);
         mAnimationHandler.sendEmptyMessage(AnimationMsg.START_SPINNING.ordinal());
     }
 
+    private void setSpin(boolean spin) {
+        mSpin = spin;
+    }
 
     //----------------------------------
     //region touch input

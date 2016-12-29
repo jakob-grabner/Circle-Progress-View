@@ -141,6 +141,7 @@ public class CircleProgressView extends View {
     private Paint.Cap mSpinnerStrokeCap = Paint.Cap.BUTT;
     //Paints
     private Paint mBarPaint = new Paint();
+    private Paint mShaderlessBarPaint;
     private Paint mBarSpinnerPaint = new Paint();
     private Paint mBarStartEndLinePaint = new Paint();
     private Paint mBackgroundCirclePaint = new Paint();
@@ -323,6 +324,11 @@ public class CircleProgressView extends View {
     public void setBarStrokeCap(Paint.Cap _barStrokeCap) {
         mBarStrokeCap = _barStrokeCap;
         mBarPaint.setStrokeCap(_barStrokeCap);
+        if (mBarStrokeCap != Paint.Cap.BUTT) {
+            mShaderlessBarPaint = new Paint(mBarPaint);
+            mShaderlessBarPaint.setShader(null);
+            mShaderlessBarPaint.setColor(mBarColors[0]);
+        }
     }
 
     public int getBarWidth() {
@@ -1492,6 +1498,12 @@ public class CircleProgressView extends View {
         mBarPaint.setStrokeCap(mBarStrokeCap);
         mBarPaint.setStyle(Style.STROKE);
         mBarPaint.setStrokeWidth(mBarWidth);
+
+        if (mBarStrokeCap != Paint.Cap.BUTT) {
+            mShaderlessBarPaint = new Paint(mBarPaint);
+            mShaderlessBarPaint.setShader(null);
+            mShaderlessBarPaint.setColor(mBarColors[0]);
+        }
     }
 
 
@@ -1809,7 +1821,20 @@ public class CircleProgressView extends View {
     private void drawBar(Canvas _canvas, float _degrees) {
         float startAngle = mDirection == Direction.CW ? mStartAngle : mStartAngle - _degrees;
         if (!mShowBlock) {
-            _canvas.drawArc(mCircleBounds, startAngle, _degrees, false, mBarPaint);
+
+            if (mBarStrokeCap != Paint.Cap.BUTT && _degrees > 0 && mBarColors.length > 1) {
+                if (_degrees > 180) {
+                    _canvas.drawArc(mCircleBounds, startAngle, _degrees / 2, false, mBarPaint);
+                    _canvas.drawArc(mCircleBounds, startAngle, 1, false, mShaderlessBarPaint);
+                    _canvas.drawArc(mCircleBounds, startAngle + (_degrees / 2), _degrees / 2, false, mBarPaint);
+                } else {
+                    _canvas.drawArc(mCircleBounds, startAngle, _degrees, false, mBarPaint);
+                    _canvas.drawArc(mCircleBounds, startAngle, 1, false, mShaderlessBarPaint);
+                }
+
+            } else {
+                _canvas.drawArc(mCircleBounds, startAngle, _degrees, false, mBarPaint);
+            }
         } else {
             drawBlocks(_canvas, mCircleBounds, startAngle, _degrees, false, mBarPaint);
         }

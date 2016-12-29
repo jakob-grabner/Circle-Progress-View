@@ -80,7 +80,7 @@ public class CircleProgressView extends View {
     protected RectF mCircleInnerContour = new RectF();
     //value animation
     Direction mDirection = Direction.CW;
-    float mCurrentValue = 42;
+    float mCurrentValue = 0;
     float mValueTo = 0;
     float mValueFrom = 0;
     float mMaxValue = 100;

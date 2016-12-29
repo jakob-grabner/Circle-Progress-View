@@ -564,7 +564,7 @@ public class CircleProgressView extends View {
         return mStartAngle;
     }
 
-    public void setStartAngle(int _startAngle) {
+    public void setStartAngle(@IntRange(from = 0,to = 360) int _startAngle) {
         // get a angle between 0 and 360
         mStartAngle = (int) normalizeAngle(_startAngle);
     }

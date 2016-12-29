@@ -92,8 +92,8 @@
             <enum name="bottom" value="1" />
             <enum name="left_top" value="2" />
             <enum name="right_top" value="3" />
-            <enum name="left_bottom" value="2" />
-            <enum name="right_bottom" value="3" />
+            <enum name="left_bottom" value="4" />
+            <enum name="right_bottom" value="5" />
         </attr>
 
     </declare-styleable>

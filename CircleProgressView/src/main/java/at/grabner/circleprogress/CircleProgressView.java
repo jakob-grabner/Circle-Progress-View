@@ -332,7 +332,7 @@ public class CircleProgressView extends View {
     /**
      * @param barWidth The width of the progress bar in pixel.
      */
-    public void setBarWidth(@FloatRange(from = 0.0) int barWidth) {
+    public void setBarWidth(@IntRange(from = 0) int barWidth) {
         this.mBarWidth = barWidth;
         mBarPaint.setStrokeWidth(barWidth);
         mBarSpinnerPaint.setStrokeWidth(barWidth);
@@ -361,7 +361,7 @@ public class CircleProgressView extends View {
         return mRoundToBlock;
     }
 
-    public void setRoundToWholeNumber (boolean roundToWholeNumber) {
+    public void setRoundToWholeNumber(boolean roundToWholeNumber) {
         mRoundToWholeNumber = roundToWholeNumber;
     }
 
@@ -450,9 +450,13 @@ public class CircleProgressView extends View {
         return mCurrentValue;
     }
 
-    public float getMinValueAllowed() { return mMinValueAllowed; }
+    public float getMinValueAllowed() {
+        return mMinValueAllowed;
+    }
 
-    public float getMaxValueAllowed() { return mMaxValueAllowed; }
+    public float getMaxValueAllowed() {
+        return mMaxValueAllowed;
+    }
 
     public float getMaxValue() {
         return mMaxValue;
@@ -473,14 +477,18 @@ public class CircleProgressView extends View {
      *
      * @param _minValueAllowed The min value allowed.
      */
-    public void setMinValueAllowed(@FloatRange(from = 0) float _minValueAllowed) { mMinValueAllowed = _minValueAllowed; }
+    public void setMinValueAllowed(@FloatRange(from = 0) float _minValueAllowed) {
+        mMinValueAllowed = _minValueAllowed;
+    }
 
     /**
      * The max value allowed of the progress bar. Used to limit the max possible value of the current value.
      *
      * @param _maxValueAllowed The max value allowed.
      */
-    public void setMaxValueAllowed(@FloatRange(from = 0) float _maxValueAllowed) { mMaxValueAllowed = _maxValueAllowed; }
+    public void setMaxValueAllowed(@FloatRange(from = 0) float _maxValueAllowed) {
+        mMaxValueAllowed = _maxValueAllowed;
+    }
 
     /**
      * @return The relative size (scale factor) of the unit text size to the text size

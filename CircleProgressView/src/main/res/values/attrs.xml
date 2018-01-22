@@ -31,6 +31,7 @@
         <attr name="cpv_maxValueAllowed" format="float" />
         <attr name="cpv_barWidth" format="dimension" />
         <attr name="cpv_barColor" format="color" />
+        <attr name="cpv_text_enabled" format="boolean" />
         <attr name="cpv_barColor1" format="color" />
         <attr name="cpv_barColor2" format="color" />
         <attr name="cpv_barColor3" format="color" />

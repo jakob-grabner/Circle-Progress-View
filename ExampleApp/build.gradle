@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
 
     compileSdkVersion 25
-    buildToolsVersion '24.0.2'
+    buildToolsVersion '27.0.1'
     repositories {
         maven { url "https://jitpack.io" }
     }

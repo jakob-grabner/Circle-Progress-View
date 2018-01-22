@@ -61,6 +61,8 @@ public class CircleProgressView extends View {
     //region members
     //Colors (with defaults)
     private final int mBarColorStandard = 0xff009688; //stylish blue
+    private final boolean textIsEnabled  = true;
+
     protected int mLayoutHeight = 0;
     protected int mLayoutWidth = 0;
     //Rectangles
@@ -997,8 +999,9 @@ public class CircleProgressView extends View {
         setSpinSpeed((int) a.getFloat(R.styleable.CircleProgressView_cpv_spinSpeed,
                 mSpinSpeed));
 
-        setSpin(a.getBoolean(R.styleable.CircleProgressView_cpv_spin,
-                mSpin));
+        a.getBoolean(R.styleable.CircleProgressView_cpv_text_enabled, textIsEnabled);
+
+        setSpin(a.getBoolean(R.styleable.CircleProgressView_cpv_spin,mSpin));
 
         setDirection(Direction.values()[a.getInt(R.styleable.CircleProgressView_cpv_direction, 0)]);
 
@@ -1708,113 +1711,115 @@ public class CircleProgressView extends View {
     }
 
     private void drawTextWithUnit(Canvas canvas) {
+        if (textIsEnabled) {
 
-        final float relativeGapHeight;
-        final float relativeGapWidth;
-        final float relativeHeight;
-        final float relativeWidth;
+            final float relativeGapHeight;
+            final float relativeGapWidth;
+            final float relativeHeight;
+            final float relativeWidth;
 
-        switch (mUnitPosition) {
-            case TOP:
-            case BOTTOM:
-                relativeGapWidth = 0.05f; //gap size between text and unit
-                relativeGapHeight = 0.025f; //gap size between text and unit
-                relativeHeight = 0.25f * mRelativeUniteSize;
-                relativeWidth = 0.4f * mRelativeUniteSize;
-                break;
-            default:
-            case LEFT_TOP:
-            case RIGHT_TOP:
-            case LEFT_BOTTOM:
-            case RIGHT_BOTTOM:
-                relativeGapWidth = 0.05f; //gap size between text and unit
-                relativeGapHeight = 0.025f; //gap size between text and unit
-                relativeHeight = 0.55f * mRelativeUniteSize;
-                relativeWidth = 0.3f * mRelativeUniteSize;
-                break;
-        }
-
-        float unitGapWidthHalf = mOuterTextBounds.width() * relativeGapWidth / 2f;
-        float unitWidth = (mOuterTextBounds.width() * relativeWidth);
-
-        float unitGapHeightHalf = mOuterTextBounds.height() * relativeGapHeight / 2f;
-        float unitHeight = (mOuterTextBounds.height() * relativeHeight);
-
-
-        boolean update = false;
-        //Draw Text
-        if (mIsAutoColorEnabled) {
-            mTextPaint.setColor(calcTextColor(mCurrentValue));
-        }
-
-        //set text
-        String text;
-        switch (mTextMode) {
-            case TEXT:
-            default:
-                text = mText != null ? mText : "";
-                break;
-            case PERCENT:
-                text = decimalFormat.format(100f / mMaxValue * mCurrentValue);
-                break;
-            case VALUE:
-                text = decimalFormat.format(mCurrentValue);
-                break;
-        }
-
-
-        // only re-calc position and size if string length changed
-        if (mTextLength != text.length()) {
-
-            update = true;
-            mTextLength = text.length();
-            if (mTextLength == 1) {
-                mOuterTextBounds = getInnerCircleRect(mCircleBounds);
-                mOuterTextBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.top, mOuterTextBounds.right - (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.bottom);
-            } else {
-                mOuterTextBounds = getInnerCircleRect(mCircleBounds);
+            switch (mUnitPosition) {
+                case TOP:
+                case BOTTOM:
+                    relativeGapWidth = 0.05f; //gap size between text and unit
+                    relativeGapHeight = 0.025f; //gap size between text and unit
+                    relativeHeight = 0.25f * mRelativeUniteSize;
+                    relativeWidth = 0.4f * mRelativeUniteSize;
+                    break;
+                default:
+                case LEFT_TOP:
+                case RIGHT_TOP:
+                case LEFT_BOTTOM:
+                case RIGHT_BOTTOM:
+                    relativeGapWidth = 0.05f; //gap size between text and unit
+                    relativeGapHeight = 0.025f; //gap size between text and unit
+                    relativeHeight = 0.55f * mRelativeUniteSize;
+                    relativeWidth = 0.3f * mRelativeUniteSize;
+                    break;
             }
-            if (mIsAutoTextSize) {
-                setTextSizeAndTextBoundsWithAutoTextSize(unitGapWidthHalf, unitWidth, unitGapHeightHalf, unitHeight, text);
 
-            } else {
-                setTextSizeAndTextBoundsWithFixedTextSize(text);
-            }
-        }
+            float unitGapWidthHalf = mOuterTextBounds.width() * relativeGapWidth / 2f;
+            float unitWidth = (mOuterTextBounds.width() * relativeWidth);
 
-        if (DEBUG) {
-            Paint rectPaint = new Paint();
-            rectPaint.setColor(Color.MAGENTA);
-            canvas.drawRect(mOuterTextBounds, rectPaint);
-            rectPaint.setColor(Color.GREEN);
-            canvas.drawRect(mActualTextBounds, rectPaint);
+            float unitGapHeightHalf = mOuterTextBounds.height() * relativeGapHeight / 2f;
+            float unitHeight = (mOuterTextBounds.height() * relativeHeight);
 
-        }
 
-        canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.02f), mActualTextBounds.bottom, mTextPaint);
-
-        if (mShowUnit) {
-
+            boolean update = false;
+            //Draw Text
             if (mIsAutoColorEnabled) {
-                mUnitTextPaint.setColor(calcTextColor(mCurrentValue));
+                mTextPaint.setColor(calcTextColor(mCurrentValue));
             }
-            if (update) {
-                //calc unit text position
+
+            //set text
+            String text;
+            switch (mTextMode) {
+                case TEXT:
+                default:
+                    text = mText != null ? mText : "";
+                    break;
+                case PERCENT:
+                    text = decimalFormat.format(100f / mMaxValue * mCurrentValue);
+                    break;
+                case VALUE:
+                    text = decimalFormat.format(mCurrentValue);
+                    break;
+            }
+
+
+            // only re-calc position and size if string length changed
+            if (mTextLength != text.length()) {
+
+                update = true;
+                mTextLength = text.length();
+                if (mTextLength == 1) {
+                    mOuterTextBounds = getInnerCircleRect(mCircleBounds);
+                    mOuterTextBounds = new RectF(mOuterTextBounds.left + (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.top, mOuterTextBounds.right - (mOuterTextBounds.width() * 0.1f), mOuterTextBounds.bottom);
+                } else {
+                    mOuterTextBounds = getInnerCircleRect(mCircleBounds);
+                }
                 if (mIsAutoTextSize) {
-                    setUnitTextBoundsAndSizeWithAutoTextSize(unitGapWidthHalf, unitWidth, unitGapHeightHalf, unitHeight);
+                    setTextSizeAndTextBoundsWithAutoTextSize(unitGapWidthHalf, unitWidth, unitGapHeightHalf, unitHeight, text);
 
                 } else {
-                    setUnitTextBoundsAndSizeWithFixedTextSize(unitGapWidthHalf * 2f, unitGapHeightHalf * 2f);
+                    setTextSizeAndTextBoundsWithFixedTextSize(text);
                 }
             }
 
             if (DEBUG) {
                 Paint rectPaint = new Paint();
-                rectPaint.setColor(Color.RED);
-                canvas.drawRect(mUnitBounds, rectPaint);
+                rectPaint.setColor(Color.MAGENTA);
+                canvas.drawRect(mOuterTextBounds, rectPaint);
+                rectPaint.setColor(Color.GREEN);
+                canvas.drawRect(mActualTextBounds, rectPaint);
+
             }
 
-            canvas.drawText(mUnit, mUnitBounds.left - (mUnitTextPaint.getTextSize() * 0.02f), mUnitBounds.bottom, mUnitTextPaint);
+            canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.02f), mActualTextBounds.bottom, mTextPaint);
+
+            if (mShowUnit) {
+
+                if (mIsAutoColorEnabled) {
+                    mUnitTextPaint.setColor(calcTextColor(mCurrentValue));
+                }
+                if (update) {
+                    //calc unit text position
+                    if (mIsAutoTextSize) {
+                        setUnitTextBoundsAndSizeWithAutoTextSize(unitGapWidthHalf, unitWidth, unitGapHeightHalf, unitHeight);
+
+                    } else {
+                        setUnitTextBoundsAndSizeWithFixedTextSize(unitGapWidthHalf * 2f, unitGapHeightHalf * 2f);
+                    }
+                }
+
+                if (DEBUG) {
+                    Paint rectPaint = new Paint();
+                    rectPaint.setColor(Color.RED);
+                    canvas.drawRect(mUnitBounds, rectPaint);
+                }
+
+                canvas.drawText(mUnit, mUnitBounds.left - (mUnitTextPaint.getTextSize() * 0.02f), mUnitBounds.bottom, mUnitTextPaint);
+            }
         }
     }
 

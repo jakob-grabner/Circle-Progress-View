@@ -3,11 +3,11 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.jakob-grabner'
 android {
-    compileSdkVersion 25
-    buildToolsVersion '24.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '28.0.3'
     defaultConfig {
         minSdkVersion 11
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 3
         versionName "1.2"
     }
@@ -31,7 +31,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-annotations:25.1.0'
+    implementation 'com.android.support:support-annotations:25.1.0'
 }
 
 // build a jar with source files

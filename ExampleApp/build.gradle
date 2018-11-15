@@ -4,9 +4,7 @@ android {
 
     compileSdkVersion 27
     buildToolsVersion '28.0.3'
-    repositories {
-        maven { url "https://jitpack.io" }
-    }
+
     defaultConfig {
         applicationId "at.grabner.example.circleprogressview"
         minSdkVersion 14

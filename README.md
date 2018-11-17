@@ -61,7 +61,7 @@ allprojects {
 
 dependencies {
 	// ...
-        compile 'com.github.jakob-grabner:Circle-Progress-View:1.4'
+        implementation 'com.github.jakob-grabner:Circle-Progress-View:1.4'
 }
 ```
 ## JavaDoc

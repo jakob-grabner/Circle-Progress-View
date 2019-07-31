@@ -1,7 +1,7 @@
 package at.grabner.circleprogress;
 
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 /**
  * Created by Jakob on 05.09.2015.

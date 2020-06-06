@@ -1795,10 +1795,12 @@ public class CircleProgressView extends View {
             String[] texts = text.split("\n");
             float height = mActualTextBounds.bottom;
             for (String txt : texts){
+                mTextPaint.setTextSize(mTextSize);
+                mActualTextBounds = calcTextBounds(txt, mTextPaint, mCircleBounds); //center text in circle
                 canvas.drawText(
                         txt,
                         mActualTextBounds.left - mTextPaint.getTextSize() * 0.02f,
-                        height,
+                        height-40,
                         mTextPaint
                 );
 

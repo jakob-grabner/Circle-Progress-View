@@ -1790,6 +1790,26 @@ public class CircleProgressView extends View {
             canvas.drawRect(mActualTextBounds, rectPaint);
 
         }
+        
+        if(text.contains("\n")){
+            List<String> splitText = Arrays.asList(text.split("\n"));
+            for(int i = 0; i < splitText.size(); i++){
+                int height = i * 50;
+                canvas.drawText(
+                        splitText.get(i),
+                        mActualTextBounds.left - mTextPaint.getTextSize() * 0.02f,
+                        mActualTextBounds.bottom + height,
+                        mTextPaint
+                );
+            }
+        } else {
+            canvas.drawText(
+                    text,
+                    mActualTextBounds.left - mTextPaint.getTextSize() * 0.02f,
+                    mActualTextBounds.bottom,
+                    mTextPaint
+            );
+        }
 
         canvas.drawText(text, mActualTextBounds.left - (mTextPaint.getTextSize() * 0.02f), mActualTextBounds.bottom, mTextPaint);
 

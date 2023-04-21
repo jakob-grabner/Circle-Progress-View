@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven-publish'
 
 group = 'com.github.jakob-grabner'
 android {
-	compileSdkVersion 28
+	compileSdkVersion 33
 	defaultConfig {
 		minSdkVersion 19
-		targetSdkVersion 28
+		targetSdkVersion 33
 		versionCode 6
 		versionName "1.5"
 	}
